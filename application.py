@@ -212,6 +212,7 @@ def generate_tree():
         tree_object.main_method(global_server_data[0])
     if(len(serverData.keys()) == 3):
         res = tree_object.generate_data(map_dic, module_name, N)
+        
         res = json.dumps(res)
 
         return res
