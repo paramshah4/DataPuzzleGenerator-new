@@ -1,0 +1,78 @@
+<html>
+<script type="text/javascript">
+    let obj = JSON.parse('{{res|safe}}');
+    console.log("ATTRIBUTES WE HAVE RECEIVED FROM USER: ", obj);
+    let attributes = obj;
+</script>
+
+<head>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" media="all" title="no title" charset="utf-8" />
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>-->
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script type="text/javascript" src="/static/numerictarget.js"></script>
+</head>
+
+
+<!-- <style>
+    body {
+        background: linear-gradient(to right, #000000, #C0C0C0);
+        background-image: url(/static/black-red-puzzle.jpg);
+        background-position: center center;
+        overflow-y: auto
+    }
+</style> -->
+
+<body>
+    <center>
+        <!-- <div class="Banner8" style="background-color: #B71C1C; height: 100px">
+            <center>
+                <h1 class="banner" style="padding-top: 10px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;font-variant: small-caps;
+                text-transform: capitalize; color: white; letter-spacing: 4.8px;font-size: 70px">Data Puzzle Generator</p>
+
+            </center>
+        </div> -->
+        <div>
+            <center>
+                <div style="width:800px; margin:0 auto;" class="table table-hover">
+                    <table id="mainoutertable">
+                        <tbody id="outerTable" />
+                    </table>
+
+                    <div style="width: fit-content; margin:0 auto;">
+                        Number of Tuples: <input type="text" id="number_tuple" name="number_tuple">
+                        <div id="myParentElement"></div>
+                        <div style="padding-top: 25px; width: fit-content; margin:0 auto;">
+                            <input type="button" value="Generate and Download Data" onclick="server_call()" />
+
+                        </div>
+                        <div style="padding-top: 25px; width: fit-content; margin:0 auto;">
+                            <button onclick="onButtonClick()">Validate and get the MSE</button>
+                            <div id="server-results">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </center>
+        </div>
+    </center>
+</body>
+
+
+
+</html>

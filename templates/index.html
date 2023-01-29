@@ -1,0 +1,573 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editable Tree</title>
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" rel="stylesheet" />
+
+    <!--  
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous"> 
+	<link rel="stylesheet" href="font-awesome.min.css">
+	<link rel="stylesheet" href="bootstrap.min.css">
+	-->
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" media="all" title="no title" charset="utf-8" />
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+    <style>
+        body {
+            background-color: #fafafa;
+            font-family: 'Open Sans';
+        }
+        
+        .treetable {}
+        
+        .treetable .fa {
+            cursor: pointer;
+            padding-right: 5px;
+        }
+        
+        .treetable .rowhidden {
+            display: none;
+        }
+        
+        .treetable .j-addChild {
+            display: none;
+            margin-left: 50px;
+        }
+        
+        .treetable .form-distribution {
+            margin-left: 80px;
+        }
+        
+        .treetable .selected .j-addChild {
+            display: block;
+        }
+        
+        .treetable .btn-outline {
+            background-color: transparent;
+        }
+        
+        .treetable .form-control {
+            width: auto;
+            display: inline-block;
+        }
+        
+        .treetable .textalign-center {
+            text-align: center;
+        }
+        
+        .treetable .j-expend {
+            cursor: pointer;
+            width: 35% !important;
+            text-align: left !important;
+        }
+        
+        .treetable .maintitle {
+            width: 40% !important;
+        }
+        
+        .treetable .j-remove {
+            padding: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: red;
+        }
+        
+        .treetable .tt-header {
+            margin-top: 10px;
+        }
+        
+        .treetable .class-level-2 .class-level-ul .j-expend {
+            position: relative;
+            left: 22px;
+        }
+        
+        .treetable .class-level-3 .class-level-ul .j-expend {
+            position: relative;
+            left: 44px;
+        }
+        
+        .treetable .class-level-4 .class-level-ul .j-expend {
+            position: relative;
+            left: 66px;
+        }
+        
+        .treetable .class-level-5 .class-level-ul .j-expend {
+            position: relative;
+            left: 88px;
+        }
+        
+        .treetable .class-level-6 .class-level-ul .j-expend {
+            position: relative;
+            left: 110px;
+        }
+        
+        .treetable .class-level-7 .class-level-ul .j-expend {
+            position: relative;
+            left: 132px;
+        }
+        
+        .treetable .class-level-8 .class-level-ul .j-expend {
+            position: relative;
+            left: 154px;
+        }
+        
+        .treetable .class-level-9 .class-level-ul .j-expend {
+            position: relative;
+            left: 176px;
+        }
+        
+        .treetable .class-level-1 {
+            border-bottom: dashed 1px #eee;
+        }
+        
+        .treetable .class-level-ul {
+            padding: 0;
+            margin-bottom: 2px;
+        }
+        
+        .treetable .class-level-ul li {
+            float: left;
+            text-align: center;
+            vertical-align: middle;
+            padding: 1px 10px;
+            min-width: 100px;
+            list-style: none;
+        }
+        
+        .treetable .class-level-ul:after {
+            display: block;
+            clear: both;
+            height: 0;
+            content: "\0020";
+        }
+        
+        .treetable .tt-header div span {
+            width: auto;
+            line-height: 29px;
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .treetable .tt-body {
+            border: solid 1px #DDD;
+            padding-top: 1px;
+            background-color: #FFF;
+        }
+        
+        .treetable .tt-header div {
+            border: solid 1px #DDD;
+            border-bottom: none;
+            background-color: #FFF;
+        }
+    </style>
+    <script type="text/javascript">
+        var obj = JSON.parse('{{res|safe}}');
+        console.log("ATTRIBUTES WE HAVE RECEIVED FROM USER: ", obj);
+
+        attributes = obj;
+    </script>
+</head>
+
+<body>
+    <div class="container" style="margin-top:25px;">
+        <!-- <h2>Editable Tree - v4.0</h2> -->
+        <!-- <h4>TODO: Once categorical used, it will never be used again. So, remove it immediately. Keep Numerical attribute(s).</h4> -->
+        <!-- <h4> TODO: Add Target Variable and Distribution </h4> -->
+        <h4> TODO: </h4>
+
+        <div id="targetDiv" style="padding-bottom: 20px">
+
+        </div>
+
+        <div id="bs-treeetable" class="treetable">
+            Loading ...
+        </div>
+        <!-- <div id="dialog"> -->
+        <center>
+            <div id="dropdownlist_div" style="display: none;">
+                <input id="dropdownlist" />
+            </div>
+        </center>
+
+
+        <!-- </div> -->
+        <form action="getTree" method="POST" onsubmit="return displayTreeData()" target="_blank">
+            <input type="text" id="entire_tree_data" style="display:none" name="entire_tree_data" />
+            <div id="submitButton" class="treetable" style="margin-top: 50px">
+                <center>
+                    <input type="submit" style="" />
+                </center>
+            </div>
+        </form>
+
+        <div id="submitButton" class="treetable">
+            <center>
+                <button style="" onclick="saveTree()"> Download Tree </button>
+            </center>
+        </div>
+        <br>
+    </div>
+
+    <!-- <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script> -->
+
+    <script type="text/javascript" src="static/jquery.edittreetable.js"></script>
+    <script type="text/javascript">
+        var selectDiv = document.getElementById("targetDiv");
+        var selectTag = document.createElement("select");
+        var holdingPreviousTarget = {};
+
+        selectTag.setAttribute("id", "targetSelectId");
+        selectTag.setAttribute("onChange", "setTargetVariable('', '')")
+        defopt = document.createElement("option");
+        def = "-- Select the target attribute --"
+        var t1 = document.createTextNode(def);
+
+        defopt.appendChild(t1);
+        defopt.setAttribute("value", def);
+        selectTag.appendChild(defopt);
+        for (var key in attributes) {
+            var optTag = document.createElement("option");
+            var t = document.createTextNode(key);
+
+            optTag.appendChild(t);
+            optTag.setAttribute("value", key);
+            selectTag.appendChild(optTag);
+        }
+        selectDiv.appendChild(selectTag);
+
+        function remove_hint_div() {
+            var hintDiv = document.getElementById("hint_div");
+            if (hintDiv) {
+                hintDiv.remove();
+                for (var x in holdingPreviousTarget) {
+                    attributes[x] = holdingPreviousTarget[x];
+                }
+                holdingPreviousTarget = {};
+            }
+        }
+
+        function remove_target_from_dropdown(previousKey) {
+            var targetName = document.getElementById("targetSelectId").value;
+            var elements = document.getElementsByClassName("class-level-ul");
+            var roots = [];
+
+            for (var x = 0; x < elements.length; x++) {
+                roots.push(elements[x].getAttribute("data-id"));
+            }
+
+            if (roots.length > 0) {
+                var rootId = Math.min(roots);
+                var str = "#selectId_" + rootId + " option[value=" + targetName + "]";
+
+                try {
+                    document.querySelector(str).remove();
+                    if (targetName != previousKey && previousKey.length > 0) {
+                        var opt = document.createElement('option');
+                        opt.value = previousKey;
+                        opt.innerHTML = previousKey;
+
+                        var targetSel = document.getElementById("selectId_" + rootId);
+                        targetSel.insertBefore(opt, targetSel.firstChild);
+                    }
+                } catch (err) {
+                    console.log("ERROR REMOVING TARGET OPTION FROM ROOT DROPDOWN: ", err);
+                }
+            }
+        }
+
+        function check_eligibility() {
+            var elements = document.getElementsByClassName("class-level-ul");
+            return elements.length > 1;
+        }
+
+        function setTargetVariable(targetName, targetDistribution) {
+            var reservingPreviousKey = "";
+
+            if (Object.keys(holdingPreviousTarget).length > 0) {
+                reservingPreviousKey = Object.keys(holdingPreviousTarget)[0];
+            }
+
+            if (check_eligibility()) {
+                alert("You have started building tree, you cannot change target variable now!");
+                var _keys = Object.keys(holdingPreviousTarget);
+
+                if (_keys.length > 0) {
+                    document.getElementById("targetSelectId").value = _keys[0];
+                }
+                return;
+            }
+
+            remove_hint_div();
+
+            var selectDiv = document.getElementById("targetDiv");
+
+            var isDistributionProvided = false;
+
+            if (targetName.length > 0) {
+                var selectedValue = targetName;
+                document.getElementById("targetSelectId").value = selectedValue;
+                isDistributionProvided = true;
+            } else {
+                var selectedValue = document.getElementById("targetSelectId").value;
+            }
+
+            console.log("LOADED FROM FILE?: ", isDistributionProvided);
+            console.log("WITH DATA: " + targetName + " -> " + targetDistribution);
+
+            if (attributes[selectedValue]["type"] == "categorical") {
+                console.log("CATEGORICAL");
+
+                //LOGIC FOR ADDING HINT IN WHICH ORDER DISTRIBUTION SHOULD BE.
+                var hintString = "";
+
+                for (var x = 0; x < attributes[selectedValue]["values"].length; x++) {
+                    hintString += attributes[selectedValue]["values"][x] + ", ";
+                }
+
+                hintString = hintString.slice(0, -2);
+
+                var hintDiv = document.createElement("div");
+                hintDiv.setAttribute("id", "hint_div");
+
+                var hintText = document.createElement("h5");
+                hintText.innerHTML = "Distribution should be in this order separated by comma: <b>" + hintString + "</b>";
+                selectDiv.appendChild(hintText);
+
+                var defaultDistribution = document.createElement("input");
+
+                defaultDistribution.setAttribute("id", "hint-distribution-inpt");
+                defaultDistribution.setAttribute("placeholder", "Provide default distribution.");
+                defaultDistribution.setAttribute("class", "form-control input-sm");
+
+                if (isDistributionProvided) {
+                    defaultDistribution.setAttribute("value", targetDistribution);
+                }
+
+                hintDiv.appendChild(hintText);
+                hintDiv.appendChild(defaultDistribution);
+
+                selectDiv.appendChild(hintDiv);
+
+                holdingPreviousTarget[selectedValue] = attributes[selectedValue];
+                delete attributes[selectedValue];
+            }
+
+            remove_target_from_dropdown(reservingPreviousKey);
+        }
+
+        var data = [{
+            id: 1,
+            name: "Root",
+            pid: 0
+        }];
+
+        data = $("#bs-treeetable").bstreetable({
+            data: data,
+            maintitle: "Attribute",
+            availableAttributes: attributes,
+            nodeaddCallback: function(data, callback) {
+                //alert(JSON.stringify(data));
+                console.log("HTML: ", data);
+                callback({
+                    id: data.id,
+                    name: data.name,
+                    pid: data.pid
+                });
+                console.log("DONE WITH THE CALLBACK HTML!");
+            },
+            noderemoveCallback: function(data, callback) {
+                //alert(JSON.stringify(data));
+                callback();
+            },
+            nodeupdateCallback: function(data, callback) {
+                //alert(JSON.stringify(data));
+                callback();
+            },
+            extfield: [{
+                title: "Available Attributes",
+                key: "innercode",
+                type: "select"
+            }]
+        });
+    </script>
+    <script>
+        function distri_helper(name, distri, target_length, isDefault) {
+            var msg = name + ": ";
+
+            if (distri.length == 0) {
+                if (isDefault) {
+                    return "Please provide Default Distribution!";
+                }
+            } else {
+                var vals = distri.split(",");
+                if (vals.length != target_length) {
+                    return msg + "There should only be " + target_length.toString() + " values! Found (" + vals.length.toString() + ")";
+                } else {
+                    var curr = 0;
+                    for (var x = 0; x < vals.length; x++) {
+                        curr += parseInt(vals[x]);
+                    }
+
+                    if (curr != 100) {
+                        return msg + "should add upto 100!";
+                    }
+                }
+            }
+
+            return "";
+        }
+
+        function validate_distributions(arg) {
+            var target_length = arg["target_variable"]["values"].length;
+            var res = "";
+            res = distri_helper("Default Distribution", arg["target_variable"]["distribution"], target_length, true);
+
+            if (res.length > 0) {
+                return res;
+            }
+
+            for (var x in data) {
+                if (!isNaN(x)) {
+                    if ("distribution" in data[x]) {
+                        var res = "";
+                        res = distri_helper(data[x]["name"], data[x]["distribution"], target_length, false);
+
+                        if (res.length > 0) {
+                            return res;
+                        }
+                    }
+                }
+            }
+
+            return "";
+        }
+
+        function displayTreeData() {
+            console.log("IS IT REALLY SAVED?: ", data["isSaved"]);
+
+            data["target_variable"] = {
+                "name": document.getElementById("targetSelectId").value,
+                "distribution": document.getElementById("hint-distribution-inpt").value
+            }
+
+            for (var x in holdingPreviousTarget) {
+                data["target_variable"]["type"] = holdingPreviousTarget[x]["type"];
+                data["target_variable"]["values"] = holdingPreviousTarget[x]["values"];
+                data["target_variable"]["derived"] = holdingPreviousTarget[x]["derived"];
+            };
+
+            var res = validate_distributions(data);
+            if (res.length > 0) {
+                alert(res);
+                return false;
+            }
+
+            if (!data["isSaved"]) {
+                var r = confirm("You haven't saved latest version of tree, do you want to proceed anyway?");
+                if (r == 0) {
+                    return false;
+                }
+            }
+
+            data["attr_info"] = attributes
+            delete data["isSaved"];
+
+            var res = JSON.stringify(data);
+            var hiddenId = document.getElementById("entire_tree_data");
+            hiddenId.value = res;
+
+            data["isSaved"] = true;
+
+            return true;
+        }
+
+        function saveTree() {
+            delete data["isSaved"];
+
+            data["target_variable"] = {
+                "name": document.getElementById("targetSelectId").value,
+                "distribution": document.getElementById("hint-distribution-inpt").value
+            }
+
+            for (var x in holdingPreviousTarget) {
+                data["target_variable"]["type"] = holdingPreviousTarget[x]["type"];
+                data["target_variable"]["values"] = holdingPreviousTarget[x]["values"];
+                data["target_variable"]["derived"] = holdingPreviousTarget[x]["derived"];
+            };
+
+            data["attr_info"] = attributes
+
+            var jsonData = JSON.stringify(data);
+            var nameOfTree = "";
+
+            // while (nameOfTree.length == 0) {
+            //     nameOfTree = prompt("Give the name of tree.");
+
+            //     if (nameOfTree.length == 0) {
+            //         alert("Please provide valid name of the file!");
+            //     }
+            // }
+
+
+            var b = new Blob([jsonData], {
+                type: "text/plain;charset=utf-8"
+            });
+            // saveAs(b, nameOfTree + ".json");
+            // data["isSaved"] = true;
+            let file = new File([jsonData], "q.json", {
+                type: "text/plain",
+            });
+            var formdata = new FormData();
+            // formdata.append("nameOfTree", nameOfTree);
+            formdata.append("jsonData", file)
+            var SERVER_URL = window.location.protocol + "//" + window.location.host;
+            var REST_CALL = SERVER_URL + "/treesave";
+
+            $.ajax({
+                url: REST_CALL,
+                data: formdata,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function(treedata) {
+                    var date = new Date()
+                    var dd = String(date.getDate()).padStart(2, '0');
+                    var month = date.toLocaleString('default', {
+                        month: 'long'
+                    });
+                    if (treedata.includes("Error")) {
+                        filename = prompt(treedata);
+                        filename = "DataPuzzle-" + filename + "-tree-" + dd + month
+                    } else {
+                        if (treedata.includes("-")) {
+                            filename = "DataPuzzle-" + treedata.split("-")[0] + "-tree-" + treedata.split("-")[1] + "-" + dd + month
+                        } else {
+                            filename = "DataPuzzle-" + treedata.split("-")[0] + "-tree-" + dd + month
+                        }
+                    }
+
+                    saveAs(b, filename + ".json");
+                    data["isSaved"] = true;
+                }
+            });
+
+        }
+    </script>
+</body>
+
+</html>

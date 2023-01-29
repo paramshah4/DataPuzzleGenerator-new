@@ -1,0 +1,468 @@
+<html>
+
+<head>
+    <title> Generated Data! </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/downloadData.css">
+
+    <script type="text/javascript">
+        var obj = JSON.parse('{{res|safe}}');
+        console.log("ATTRIBUTES WE HAVE RECEIVED FROM USER: ", obj);
+        var attributes = obj;
+
+        function renderDerivedDetail(derived, base) {
+            var mainTable = document.getElementById("outerTable");
+            var p = document.createElement("h4");
+            p.innerHTML = "Upload Derived Attribute's Definition Code:"
+            var inp = document.createElement("input");
+            inp.setAttribute("name", "py_file");
+            inp.setAttribute("id", "py_file");
+            inp.setAttribute("type", "file");
+            inp.setAttribute("value", "Upload Code");
+            inp.setAttribute("accept", ".py");
+            mainTable.appendChild(p);
+            mainTable.appendChild(inp);
+            for (var x = 0; x < derived.length; x++) {
+
+                var r1 = document.createElement("tr");
+
+                var r1c1 = document.createElement("td");
+                r1c1.innerHTML = "Name of the Attribute:";
+
+                var r1c2 = document.createElement("td");
+                r1c2.innerHTML = derived[x];
+
+                r1.appendChild(r1c1);
+                r1.appendChild(r1c2);
+
+                var r2 = document.createElement("tr");
+
+                var r2c1 = document.createElement("td");
+                r2c1.innerHTML = "Corresponding Method in .py file:";
+
+                var r2c2 = document.createElement("td");
+                var methodName = document.createElement("input");
+                methodName.setAttribute("name", "method_name");
+                methodName.setAttribute("id", "method_" + x);
+                methodName.setAttribute("required", "required");
+
+                r2c2.appendChild(methodName);
+
+                r2.appendChild(r2c1);
+                r2.appendChild(r2c2);
+
+                var r3 = document.createElement("tr");
+
+                var r3c1 = document.createElement("td");
+                r3c1.innerHTML = "Arguments:";
+
+                var r3c2 = document.createElement("td");
+
+                var baseDropdown = document.createElement("select");
+                baseDropdown.setAttribute("name", "func_argument");
+                baseDropdown.setAttribute("id", "arg_" + x);
+                baseDropdown.multiple = true;
+
+                for (var b = 0; b < base.length; b++) {
+                    var optTag = document.createElement("option");
+                    optTag.setAttribute("value", base[b]);
+                    optTag.setAttribute("id", "opt_" + x + "_" + b);
+
+                    var t = document.createTextNode(base[b]);
+                    optTag.appendChild(t);
+
+                    baseDropdown.appendChild(optTag);
+
+                }
+                var r4 = document.createElement("tr");
+                var r4c1 = document.createElement("td");
+                r4c1.innerHTML = "Unmask? ";
+                var r4c2 = document.createElement("td");
+                var baseRadio = document.createElement("input");
+                baseRadio.setAttribute("type", "radio");
+                baseRadio.setAttribute("name", "masked_" + x)
+                baseRadio.setAttribute("attrid", x);
+                baseRadio.setAttribute("id", "masked_" + x);
+                baseRadio.setAttribute("checked", true);
+                // baseRadio.setAttribute("onchange", "display(0, this, 'derived')");
+                baseRadio.setAttribute("value", "0");
+
+                var derivedRadio = document.createElement("input");
+                derivedRadio.setAttribute("type", "radio");
+                derivedRadio.setAttribute("name", "masked_" + x);
+                derivedRadio.setAttribute("attrid", x);
+                derivedRadio.setAttribute("id", "masked_yes_" + x);
+                // derivedRadio.setAttribute("onchange", "display(1, this, 'derived')");
+                derivedRadio.setAttribute("value", "1");
+
+                r4c2.appendChild(baseRadio);
+                r4c2.appendChild(document.createTextNode("No"));
+
+                r4c2.appendChild(derivedRadio);
+                r4c2.appendChild(document.createTextNode("Yes"));
+
+
+                r4.appendChild(r4c1)
+                r4.appendChild(r4c2)
+
+
+                r3c2.appendChild(baseDropdown);
+
+                r3.appendChild(r3c1);
+                r3.appendChild(r3c2);
+
+                mainTable.appendChild(r1);
+                mainTable.appendChild(r2);
+                mainTable.appendChild(r3);
+                mainTable.appendChild(r4);
+
+                var hLine = document.createElement("hr");
+                hLine.setAttribute("style", "width:230%");
+
+                mainTable.appendChild(hLine);
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function download_csv(obj, fname) {
+            console.log("obj:", obj)
+            console.log("obj['data']", obj["data"])
+            var data = obj["data"];
+            var csv = '';
+            var header = []
+            var rows = []
+
+            for (var x = 0; x < obj["cols"].length; x++) {
+                csv += obj["cols"][x] + ",";
+            }
+            for (var x = 0; x < obj["cols"].length; x++) {
+                header.push(obj["cols"][x]);
+            }
+
+            data.forEach(function(row) {
+                rows.push(row)
+            });
+            console.log("rows")
+            console.log(rows)
+
+            if (csv.length > 0) {
+                csv = csv.slice(0, -1);
+            }
+
+            csv += "\n";
+
+            data.forEach(function(row) {
+                csv += row.join(',');
+                csv += "\n";
+            });
+            console.log(csv)
+            let file = new File([csv], "fe.csv", {
+                type: "text/plain",
+            });
+            var formdata = new FormData();
+            formdata.append("file", file);
+            formdata.append("filename", attributes["filename"])
+                // formdata.append("filename", document.getElementById("file_name").value)
+            var SERVER_URL = window.location.protocol + "//" + window.location.host;
+            var REST_CALL = SERVER_URL + "/downloadcsv";
+
+            $.ajax({
+                url: REST_CALL,
+                data: formdata,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function(data) {
+                    var date = new Date()
+                    var dd = String(date.getDate()).padStart(2, '0');
+                    var month = date.toLocaleString('default', {
+                        month: 'long'
+                    });
+                    if (data.includes("Error")) {
+                        filename = prompt(data);
+                        filename = "DataPuzzle-" + filename + "-csv-" + dd + month
+                    } else {
+                        if (data.includes("-")) {
+                            filename = "DataPuzzle-" + data.split("-")[0] + "-csv-" + data.split("-")[1] + "-" + dd + month
+                        } else {
+                            filename = "DataPuzzle-" + data.split("-")[0] + "-csv-" + dd + month
+                        }
+                    }
+
+                    saveAs(file, filename + ".csv");
+
+
+                }
+            });
+
+        }
+
+        function validate_entries() {
+            if (attributes['derived'].length > 0) {
+                if (document.getElementById("py_file").value == "") {
+                    alert("Please select derived attributes definition .py!");
+                    return false;
+                }
+            }
+
+            var derived = attributes['derived'];
+
+            for (var d = 0; d < derived.length; d++) {
+                if (document.getElementById("method_" + d).length == 0) {
+                    alert("Please provide corresponding method's name for " + derived[d] + " attribute!");
+                    return false;
+                }
+
+                var opts = document.getElementById("arg_" + d).options;
+
+                var selected = [];
+
+                for (var o = 0; o < opts.length; o++) {
+                    var oElement = document.getElementById("opt_" + d + "_" + o);
+                    if (oElement.selected) {
+                        selected.push(oElement.value);
+                    }
+                }
+
+                if (selected.length == 0) {
+                    alert("Please select at least one base variable for " + derived[d] + " attribute!");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function prepareData() {
+            var res = {};
+            var derived = attributes['derived'];
+
+            for (var d = 0; d < derived.length; d++) {
+                var methodName = document.getElementById("method_" + d).value;
+
+                var opts = document.getElementById("arg_" + d).options;
+                var selected = [];
+
+                for (var o = 0; o < opts.length; o++) {
+                    var oElement = document.getElementById("opt_" + d + "_" + o);
+                    if (oElement.selected) {
+                        selected.push(oElement.value);
+                    }
+                }
+
+
+                var ismasked = document.getElementById("masked_yes_" + d).checked;
+                if (ismasked) {
+                    masked = "no"
+                } else {
+                    masked = "yes"
+                }
+
+
+                res[derived[d]] = {
+                    "parameters": selected,
+                    "method_name": methodName,
+                    "masked": masked
+                }
+            }
+
+            return res;
+        }
+
+        
+
+        function showSpinner() {
+        const spinner = document.getElementById("spinner");
+        spinner.className = "show";
+        }
+
+        function hideSpinner() {
+            spinner.className = spinner.className.replace("show", "");
+        }
+
+        function server_call() {
+            if (!validate_entries()) {
+                return;
+            }
+            showSpinner()
+            var derivedAttrInfo = prepareData();
+            if (attributes['derived'].length > 0) {
+                var fName = document.getElementById("py_file").files[0].name;
+                var moduleName = fName.split(".")[0];
+            } else {
+                var moduleName = null;
+            }
+
+            var N = document.getElementById("number_tuple").value;
+            // var name = document.getElementById("file_name").value;
+
+            if (N.length == 0) {
+                alert("Provide Number of Tuples to be generated!");
+                return
+            } else {
+                if (parseInt(N) < 1) {
+                    alert("Provide Valid Number of Tuples to be generated!");
+                    return
+                }
+            }
+
+            // if (name.length == 0) {
+            //     alert("Provide name of file!");
+            //     return
+            // }
+
+            var res = {
+                "derived_atts": derivedAttrInfo,
+                "module_name": moduleName,
+                "data_points": N
+            }
+
+            console.log("DATA WILL BE SENT TO SERVER!: ", res);
+
+            var formData = new FormData();
+            if (attributes['derived'].length > 0) {
+
+                formData.append("py_file", document.getElementById("py_file").files[0]);
+            } else {
+                formData.append("py_file", null)
+            }
+            formData.append("res", JSON.stringify(res));
+
+            var SERVER_URL = window.location.protocol + "//" + window.location.host;
+            var REST_API = SERVER_URL + "/generateData";
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", REST_API, true);
+
+            xhttp.onload = function(e) {
+                if (xhttp.readyState === 4) {
+                    if (xhttp.status === 200) {
+                        /*
+                        var data = JSON.parse(xhttp.responseText);
+                        download_csv(data, name);
+                        */
+                        console.log("RESPONSE RECEIVED!");
+                        var data = JSON.parse(xhttp.responseText);
+
+                        if ("error" in data) {
+                            alert(data["error"]);
+                        } else {
+                            download_csv(data, name);
+                        }
+
+                        if (attributes['derived'].length > 0) {
+                            document.getElementById("py_file").value = ""
+                        };
+                        console.log("FILE INPUT RESET!");
+                    } else {
+                        alert("Error Occured! Check logs");
+                        console.error("Server error: ", xhttp.statusText);
+                    }
+                    hideSpinner()
+                }
+            };
+            xhttp.onerror = function(e) {
+                console.error("Error connecting to: ", SERVER_URL);
+            };
+
+            xhttp.send(formData);
+        }
+
+        function onButtonClick() {
+
+
+            var SERVER_URL = window.location.protocol + "//" + window.location.host;
+            var REST_CALL = SERVER_URL + "/perfectpredictionmodel";
+            var formData = new FormData();
+            // var csv_file = document.getElementById("csv_file").files[0];
+            // // alert(csv_file)
+            // if (csv_file == null) {
+            //     alert("Please upload CSV file before validation")
+            // }
+            // formData.append("csv_file", csv_file);
+
+            // var json_file = document.getElementById("json_file").files[0]
+            //     // alert(json_file)
+            // if (json_file == null) {
+            //     alert("Please choose Tree json file before validation")
+            // }
+            // if (csv_file == null && json_file == null) {
+            //     alert("Please upload CSV and Tree json file file before validation")
+            // }
+
+            // formData.append("json_file", json_file);
+            // console.log(formData)
+            console.log(REST_CALL)
+
+            $.ajax({
+                url: REST_CALL,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                data: formData,
+            }).done(function(response) { //
+                if (response.includes("Error")) {
+                    alert(response);
+                    var div = document.getElementById('server-results');
+                    console.log(div)
+                    div.setAttribute("style", "display:none;")
+
+                } else {
+                    document.getElementById('server-results').style.display = "block"
+                    var message = '<h4>Accuracy is ' + response + '% </h4>'
+                    $("#server-results").html(message);
+                }
+            });
+        }
+
+        function showDiv() {
+            document.getElementById('ppm_div').style.display = "none";
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <center>
+            <h2> Generate and Download Data! </h2>
+            <!-- Upload Derived Attribute's Definition Code: <input type="file" value="Upload Code" name="py_file" id="py_file" accept=".py" /> -->
+
+            <hr>
+
+            <table>
+                <tbody id="outerTable" />
+            </table>
+
+            <hr> Number of Tuples: <input type="text" id="number_tuple" name="number_tuple">
+            <!-- <br> Name of the File: <input type="text" id="file_name" name="file_name"> <br>  -->
+            <br>
+            <div style="padding-top: 25px;">
+                <input type="button" value="Generate and Download Data" onclick="server_call()" /></div>
+            <!-- <div style="padding-top: 25px;">
+                <button onclick="showDiv()">Click here to find the accuracy using prediction model</button>
+            </div> -->
+            <div id="spinner"></div> 
+            <div style="padding-top: 25px;">
+                <!-- <h4> Upload CSV file and tree file to get the accuracy </h4> -->
+
+                <!-- <input type="file" name="csv_file" id="csv_file" accept=".csv" value="CSV file" />
+                <input type="file" name="json_file" id="json_file" accept="application/json" value="Tree JSON file" /> -->
+                <button onclick="onButtonClick()">Validate and get the accuracy</button>
+                <div id="server-results">
+
+                </div>
+
+            </div>
+
+        </center>
+    </div>
+</body>
+<script type="text/javascript">
+    if (attributes['derived'].length > 0) {
+        renderDerivedDetail(attributes['derived'], attributes['base']);
+    }
+</script>
+
+</html>

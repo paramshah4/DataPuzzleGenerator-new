@@ -1,0 +1,667 @@
+<html>
+
+<head>
+    <title> Add Attributes </title>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <script type="text/javascript">
+        var totalAttribute = 0;
+        var isFileSaved = false;
+        var istargetCat = true;
+        x = 1;
+        var globalfilename = null;
+        // var nameOfFolder = null;
+
+        function showAlert(msg) {
+            alert(msg);
+        }
+
+
+
+        function display(val, ref, target) {
+            if (target == 'old') {
+                var idOfRadio = ref.id.split("_")[1];
+
+                var x = document.getElementById("value_form_" + idOfRadio);
+                var y = document.getElementById("num_form_" + idOfRadio);
+
+                if (val == 1) {
+                    x.style.display = 'inherit';
+                    y.style.display = 'none';
+                } else {
+                    if (document.getElementById("derived_radio_" + idOfRadio).checked) {
+                        document.getElementById("new_lower_" + idOfRadio).disabled = true;
+                        document.getElementById("new_upper_" + idOfRadio).disabled = true;
+                    } else {
+                        document.getElementById("new_lower_" + idOfRadio).disabled = false;
+                        document.getElementById("new_upper_" + idOfRadio).disabled = false;
+                    }
+                    x.style.display = 'none';
+                    y.style.display = 'inherit';
+                }
+            } else if (target == 'derived') {
+                var idOfRadio = ref.getAttribute("attrid");
+                var isNumChecked = document.getElementById("num_" + idOfRadio).checked;
+
+                var lowerLim = document.getElementById("new_lower_" + idOfRadio);
+                var upperLim = document.getElementById("new_upper_" + idOfRadio);
+
+                if (val == 1 && isNumChecked) {
+                    lowerLim.disabled = true;
+                    upperLim.disabled = true;
+                } else if (val == 0 && isNumChecked) {
+                    lowerLim.disabled = false;
+                    upperLim.disabled = false;
+                }
+            }
+        }
+
+        function addAttribute() {
+            if (totalAttribute > 0) {
+                var res = validateFirst(totalAttribute - 1);
+
+                if (res.length > 0) {
+                    showAlert(res);
+                    return;
+                }
+            }
+
+            isFileSaved = false;
+
+            var mainTable = document.getElementById("outerTable");
+            var div = document.createElement("div");
+            div.setAttribute("style", "border: 1px solid;padding: 10px; box-shadow: 5px 10px 8px #888888;margin-top: 15px;");
+
+            div.setAttribute("id", "childdiv" + x);
+            x += 1;
+
+            //First Row of the form
+            var r1 = document.createElement("tr");
+
+            var r1c1 = document.createElement("td");
+            r1c1.innerHTML = "Name of the Attribute:";
+
+            var r1c2 = document.createElement("td");
+            var attrName = document.createElement("input");
+            attrName.setAttribute("name", "attr_name");
+            attrName.setAttribute("maxlength", "12");
+            attrName.setAttribute("id", "attr_name_" + totalAttribute);
+            attrName.setAttribute("required", "required");
+
+            r1c2.appendChild(attrName);
+            r1c2.setAttribute("style", "width:360px");
+
+            r1.appendChild(r1c1);
+            r1.appendChild(r1c2);
+            div.appendChild(r1);
+
+            var r5 = document.createElement("tr");
+            var r5c1 = document.createElement("td");
+            var btn = document.createElement("button");
+            btn.innerHTML = "Remove the attribute";
+            btn.type = "button";
+            btn.setAttribute("class", "btn-remove-attr");
+
+            function f(id) {
+                console.log("#" + id);
+                return "#" + id;
+
+            }
+            $(document).ready(function() {
+                $("button.btn-remove-attr").off("click").click(function() {
+                    if (confirm("Are you sure you want to delete the attribute?")) {
+                        // console.log("I said OK!!");
+                        var dividremove = $(this).closest('div').attr('id');
+                        $(f(dividremove)).remove();
+                        totalAttribute -= 1;
+                        console.log("Total attributes " + totalAttribute);
+                    }
+
+
+                });
+            });
+            r5c1.appendChild(btn);
+            r5.appendChild(r5c1);
+
+
+            //Second row of the form.
+            var r2 = document.createElement("tr");
+
+            var r2c1 = document.createElement("td");
+            r2c1.innerHTML = "Type of the Attribute:";
+
+            var r2c2 = document.createElement("td");
+
+            var numRadio = document.createElement("input");
+            numRadio.setAttribute("type", "radio");
+            numRadio.setAttribute("name", "radio_" + totalAttribute);
+            numRadio.setAttribute("id", "num_" + totalAttribute);
+            numRadio.setAttribute("checked", true);
+            numRadio.setAttribute("onchange", "display(0, this, 'old')");
+            numRadio.setAttribute("value", "0");
+
+            var catRadio = document.createElement("input");
+            catRadio.setAttribute("type", "radio");
+            catRadio.setAttribute("name", "radio_" + totalAttribute);
+            catRadio.setAttribute("id", "cat_" + totalAttribute);
+            catRadio.setAttribute("onchange", "display(1, this, 'old')");
+            catRadio.setAttribute("value", "1");
+
+            r2c2.appendChild(numRadio);
+            r2c2.appendChild(document.createTextNode("Numerical"));
+
+            r2c2.appendChild(document.createElement("br"));
+
+            r2c2.appendChild(catRadio);
+            r2c2.appendChild(document.createTextNode("Categorical"));
+
+            r2.appendChild(r2c1);
+            r2.appendChild(r2c2);
+
+
+            //Fourth row of the form.
+            var r4 = document.createElement("tr");
+
+            var r4c1 = document.createElement("td");
+            r4c1.innerHTML = "Derived?:"
+
+            var r4c2 = document.createElement("td");
+
+            var baseRadio = document.createElement("input");
+            baseRadio.setAttribute("type", "radio");
+            baseRadio.setAttribute("name", "derived_" + totalAttribute);
+            baseRadio.setAttribute("attrid", totalAttribute);
+            baseRadio.setAttribute("id", "base_radio_" + totalAttribute);
+            baseRadio.setAttribute("checked", true);
+            baseRadio.setAttribute("onchange", "display(0, this, 'derived')");
+            baseRadio.setAttribute("value", "0");
+
+            var derivedRadio = document.createElement("input");
+            derivedRadio.setAttribute("type", "radio");
+            derivedRadio.setAttribute("name", "derived_" + totalAttribute);
+            derivedRadio.setAttribute("id", "derived_radio_" + totalAttribute);
+            derivedRadio.setAttribute("attrid", totalAttribute);
+            derivedRadio.setAttribute("onchange", "display(1, this, 'derived')");
+            derivedRadio.setAttribute("value", "1");
+
+            r4c2.appendChild(baseRadio);
+            r4c2.appendChild(document.createTextNode("No"));
+
+            r4c2.appendChild(derivedRadio);
+            r4c2.appendChild(document.createTextNode("Yes"));
+
+            r4.appendChild(r4c1);
+            r4.appendChild(r4c2);
+
+            //Third row of the form.
+            var r3 = document.createElement("tr");
+
+            var r3c1 = document.createElement("td");
+            r3c1.innerHTML = "Values:";
+
+            var r3c2 = document.createElement("td");
+            i = 1;
+
+
+            var catFormDiv = document.createElement("div");
+            catFormDiv.setAttribute("style", "display:none");
+            catFormDiv.setAttribute("id", "value_form_" + totalAttribute);
+
+            var catValues = document.createElement("input");
+            catValues.setAttribute("type", "text");
+            catValues.setAttribute("name", "tagValue");
+            catValues.setAttribute("id", "cat_values_" + totalAttribute);
+            catValues.setAttribute("placeholder", "Values separated by comma");
+
+            catFormDiv.appendChild(catValues);
+
+            var numFormDiv = document.createElement("div");
+            numFormDiv.setAttribute("id", "num_form_" + totalAttribute);
+
+            var lowerLim = document.createElement("input");
+            var upperLim = document.createElement("input");
+
+
+            lowerLim.setAttribute("type", "text");
+            lowerLim.setAttribute("id", "new_lower_" + totalAttribute);
+            lowerLim.setAttribute("placeholder", "Lower Bound");
+
+            upperLim.setAttribute("type", "text");
+            upperLim.setAttribute("id", "new_upper_" + totalAttribute);
+            upperLim.setAttribute("placeholder", "Upper Bound");
+
+            numFormDiv.appendChild(lowerLim);
+            numFormDiv.appendChild(upperLim);
+
+            r3c2.appendChild(catFormDiv);
+            r3c2.appendChild(numFormDiv);
+
+            r3.appendChild(r3c1);
+            r3.appendChild(r3c2);
+            div.appendChild(r2);
+            div.appendChild(r3);
+            div.appendChild(r4);
+            div.appendChild(r5);
+            mainTable.appendChild(div);
+            // mainTable.appendChild(r1);
+            // mainTable.appendChild(r2);
+            // mainTable.appendChild(r4);
+            // mainTable.appendChild(r3);
+            // mainTable.appendChild(r5);
+            // document.getElementById('tr').classList.add(i);
+
+            // var hLine = document.createElement("hr");
+            // hLine.setAttribute("style", "width:350%");
+
+            // mainTable.appendChild(hLine);
+
+            totalAttribute += 1;
+        }
+
+        function validateFirst(id) {
+            console.log(id)
+            if (document.getElementById("attr_name_" + id) != null) {
+                var attrName = document.getElementById("attr_name_" + id).value;
+                console.log(attrName);
+                var isCat = document.getElementById("cat_" + id).checked;
+                var isBase = document.getElementById("base_radio_" + id).checked;
+
+                var res = "";
+
+                if (attrName.length == 0) {
+                    res += "Attribute Name not provided, ";
+                }
+
+                if (isCat) {
+                    var catValue = document.getElementById("cat_values_" + id).value;
+                    if (catValue.length == 0) {
+                        res += "Categorical label(s) are not provided, ";
+                    }
+                } else if (isBase) {
+                    var lowerLimit = document.getElementById("new_lower_" + id).value;
+                    var upperLimit = document.getElementById("new_upper_" + id).value;
+
+                    if (lowerLimit.length == 0) {
+                        res += "Lower Limit not provided, ";
+                    }
+                    if (upperLimit.length == 0) {
+                        res += "Upper Limit not provided, ";
+                    }
+                }
+
+                if (res.length > 0) {
+                    res = res.slice(0, -2);
+                    res += "!";
+                }
+
+                return res;
+            } else {
+                return validateFirst(id - 1);
+            }
+
+        }
+
+        function gatherData() {
+            if (totalAttribute == 0) {
+                showAlert("Provide at least one attribute!");
+                return false;
+            }
+            // console.log(totalAttribute - 1);
+            var res = validateFirst(totalAttribute);
+
+            if (res.length > 0) {
+                showAlert(res);
+                return false;
+            }
+
+            if (!isFileSaved) {
+                // var r = confirm("You haven't saved latest version of schema, do you want to proceed anyway?");
+                // if (r == 0) {
+                //     return false;
+                // }
+                saveAsFile();
+
+            }
+            if (!window.confirm("Is your target variable categorical?")) {
+                istargetCat = false;
+            }
+            data = prepareData();
+            if (data["derived"].length != 0) {
+
+                var defaultcontent = " #Here goes your python code ";
+                var b = new Blob([defaultcontent], {
+                    type: "text/plain;charset=utf-8"
+                });
+                var date = new Date()
+                var dd = String(date.getDate()).padStart(2, '0');
+                var month = date.toLocaleString('default', {
+                    month: 'long'
+                });
+                for (var i = 0; i < data["derived"].length; i++) {
+                    filename = "DataPuzzle-" + data["globalfilename"][0] + "-derivedcode-" + data["derived"][i]["attributeName"] + "-" + dd + month
+                    saveAs(b, filename + ".py");
+
+                }
+            }
+
+
+            var res = JSON.stringify(data);
+            var hiddenId = document.getElementById("entire_data");
+            hiddenId.value = res;
+
+
+
+
+            return true;
+        }
+
+        function prepareData() {
+            var data = {
+                "base": [],
+                "derived": [],
+                "globalfilename": [],
+                "targetvariabletype": []
+            };
+            if (istargetCat) {
+                data["targetvariabletype"].push("categorical")
+            } else {
+                data["targetvariabletype"].push("numerical")
+            }
+
+            for (var x = 0; x < totalAttribute; x++) {
+                // console.log("derived_radio_" + x);
+                if (document.getElementById("derived_radio_" + x) !== null) {
+                    var isDerived = document.getElementById("derived_radio_" + x).checked;
+
+                    var isCat = document.getElementById("cat_" + x).checked;
+                    var values = [];
+                    var type = "";
+                    var name = document.getElementById("attr_name_" + x).value;
+                    name = name.charAt(0).toUpperCase() + name.slice(1);
+
+                    if (isCat) {
+                        type = "categorical";
+                        var temp = document.getElementById("cat_values_" + x).value.split(",");
+
+                        for (var i = 0; i < temp.length; i++) {
+                            var s = temp[i].trim();
+                            s = s.charAt(0).toUpperCase() + s.slice(1);
+                            values.push(s);
+                        }
+
+                    } else {
+                        type = "numerical";
+                        values = [document.getElementById("new_lower_" + x).value, document.getElementById("new_upper_" + x).value];
+                    }
+
+                    var curr = {
+                        "attributeName": name,
+                        "attributeType": type,
+                        "values": values
+                    }
+
+                    key = '';
+
+                    if (isDerived) {
+                        key = "derived";
+                    } else {
+                        key = "base";
+                    }
+
+                    data[key].push(curr);
+                }
+            }
+            if (globalfilename != null) {
+                data["globalfilename"].push(globalfilename)
+            }
+            globalfilename = null;
+            return data;
+        }
+
+        function sendDataToServer(data) {
+            var SERVER_URL = "http://localhost:5000/"
+            var REST_CALL = SERVER_URL + "getData";
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", REST_CALL, true);
+            xhttp.setRequestHeader("Content-type", "application/json");
+
+            xhttp.onerror = function(e) {
+                alert("Error connecting to: ", SERVER_URL);
+            };
+
+            var res = JSON.stringify(data);
+            xhttp.send(res);
+        }
+
+        function saveAsFile() {
+            var jsonData = JSON.stringify(prepareData());
+            var nameOfSchema = prompt("Give the name of schema.(This name will apply to your tree json file and final csv file)");
+            globalfilename = nameOfSchema
+
+            let file = new File([jsonData], "q.json", {
+                type: "text/plain",
+            });
+            //saveAs(b, nameOfSchema + ".json");
+            // isFileSaved = true;
+            var b = new Blob([jsonData], {
+                type: "text/plain;charset=utf-8"
+            });
+            var formdata = new FormData();
+            formdata.append("nameOfSchema", nameOfSchema);
+            formdata.append("jsonData", file)
+            var SERVER_URL = window.location.protocol + "//" + window.location.host;
+            var REST_CALL = SERVER_URL + "/schemasave";
+
+            $.ajax({
+                url: REST_CALL,
+                data: formdata,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function(data) {
+                    var date = new Date()
+                    var dd = String(date.getDate()).padStart(2, '0');
+                    var month = date.toLocaleString('default', {
+                        month: 'long'
+                    });
+                    if (data.includes("-")) {
+                        filename = "DataPuzzle-" + data.split("-")[0] + "-schema-" + data.split("-")[1] + "-" + dd + month
+                    } else {
+                        filename = "DataPuzzle-" + data.split("-")[0] + "-schema-" + dd + month
+                    }
+
+                    saveAs(b, filename + ".json");
+                    isFileSaved = true;
+                }
+            });
+
+
+
+
+            /*
+            	const opts = {
+            		types: [{
+            		  description: 'Text file',
+            		  accept: {'text/plain': ['.txt']},
+            		}],
+            	  };
+            	
+            	return window.showSaveFilePicker(opts);
+            */
+        }
+
+        function render_file() {
+            var uploadedFile = document.getElementById("json_file").files[0];
+            fullPath = document.getElementById("json_file").value;
+            var q = fullPath.split(/(\\|\/)/g).pop()
+            var w = q.substring(0, q.lastIndexOf('.'))
+            var e = w.substring(w.indexOf("-") + 1, w.lastIndexOf("-"));
+            globalfilename = e.split("-")[0]
+
+
+            document.getElementById("outerTable").innerHTML = "";
+            document.getElementById("entire_data").innerHTML = "";
+
+            totalAttribute = 0;
+
+            if (uploadedFile) {
+                var fReader = new FileReader();
+                fReader.onload = function(e) {
+                    var fileContent = JSON.parse(e.target.result);
+
+                    for (var x = 0; x < fileContent["base"].length; x++) {
+                        addAttribute();
+
+                        document.getElementById("attr_name_" + x).value = fileContent["base"][x]["attributeName"];
+
+                        if (fileContent["base"][x]["attributeType"] == "numerical") {
+                            document.getElementById("num_" + x).checked = true;
+                            document.getElementById("new_lower_" + x).value = fileContent["base"][x]["values"][0];
+                            document.getElementById("new_upper_" + x).value = fileContent["base"][x]["values"][1];
+                        } else {
+                            document.getElementById("cat_" + x).checked = true;
+                            display(1, document.getElementById("cat_" + x), 'old');
+                            document.getElementById("cat_values_" + x).value = fileContent["base"][x]["values"];
+                        }
+                    }
+
+                    for (var y = 0; y < fileContent["derived"].length; y++) {
+                        addAttribute();
+
+                        document.getElementById("attr_name_" + x).value = fileContent["derived"][y]["attributeName"];
+                        document.getElementById("derived_radio_" + x).checked = true;
+
+                        if (fileContent["derived"][y]["attributeType"] == "numerical") {
+                            document.getElementById("num_" + x).checked = true;
+                            document.getElementById("new_lower_" + x).disabled = true;
+                            document.getElementById("new_upper_" + x).disabled = true;
+                        } else {
+                            document.getElementById("cat_" + x).checked = true;
+                            display(1, document.getElementById("cat_" + x), 'old');
+                            document.getElementById("cat_values_" + x).value = fileContent["derived"][y]["values"];
+                        }
+
+                        x = totalAttribute;
+                    }
+
+                    isFileSaved = true;
+                }
+                fReader.readAsText(uploadedFile);
+            }
+        }
+    </script>
+</head>
+<style>
+    body {
+        background: url(/static/bgpuzzle2.jpg) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        /* background-repeat: no-repeat; */
+        background-position: center center;
+    }
+    h4{
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+    <center>
+         <!--<div id="incremental_csv">
+            <h4> Upload CSV file for incremental mode. </h4>
+            <form action="getIncrementalCSV" method="POST" enctype="multipart/form-data">
+                <input type="file" name="csv_file" id="csv_file" accept=".csv" />
+                <input type="Submit" value="Upload" />
+            </form>
+        </div> -->
+
+        <div class="Banner8" style="background-color: darkblue; height: 100px">
+            <center>
+                <!-- <font face="Courier New" size="10" color="white" style="padding-top: 20px;">Data Puzzle Generator</font> -->
+                <h1 class="banner" style="padding-top: 10px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;font-variant: small-caps;
+                text-transform: capitalize; color: white; letter-spacing: 4.8px;font-size: 70px">Data Puzzle Generator</p>
+
+            </center>
+        </div>
+        <div style="background-color: lightblue; width: 70%; padding: 10px;">
+            <div>
+                <h4>Create Your Own Data Puzzle!!</h4>
+                <form action="newIncremental" method="GET">
+                    <input type="Submit" value="Let's Go">
+                </form>
+            </div>
+            <div>
+                <h4>Add More Attributes To CSV Files!</h4>
+                <form action="add_attr_to_CSV" method="GET">
+                    <input type="Submit" value="Add">
+                </form>
+            </div>
+
+            <div id="main_header" style="padding-top: 20px;">
+                <h4> Design your schema from scratch or upload the schema that you have!</h4>
+                Upload existing schema file: <input type="file" value="Upload" id="json_file" onchange="render_file()" accept="application/json" />
+            </div>
+            <hr>
+
+
+            <form action="getData" method="POST" onsubmit="return gatherData()">
+                <table>
+                    <input type="text" id="entire_data" style="display:none" name="entire_data">
+                    <tbody id="outerTable" style="background-color: lightblue;">
+                    </tbody>
+                </table>
+                <input type="button" value="Add Attribute" onclick="addAttribute()" />
+                <!-- <input type="button" value="Download Schema" onclick="saveAsFile()" /> -->
+
+                <!-- <input type="Submit" /> -->
+                
+            </form>
+            <form action="generateRandomCSV" method="POST" onsubmit="return generateRandomCSV()">
+                <input type="text" id="entire_data_csv" style="display:none" name="entire_data_csv">
+                <input type="submit" value="Generate Random CSV" />
+            </form>
+
+
+        </div>
+    </center>
+
+<script>
+    function generateRandomCSV(){
+        if (totalAttribute == 0) {
+            showAlert("Provide at least one attribute!");
+            return false;
+        }
+        console.log(totalAttribute - 1);
+        var res = validateFirst(totalAttribute - 1);
+
+        if (res.length > 0) {
+            showAlert(res);
+            return false;
+        }
+        data = prepareData();
+        var res = JSON.stringify(data);
+        var hiddenId = document.getElementById("entire_data_csv");
+        hiddenId.value = res;
+        var date = new Date()
+        var dd = String(date.getDate()).padStart(2, '0');
+        var month = date.toLocaleString('default', {
+            month: 'long'
+        });
+        var nameOfSchema = prompt("Give the name of schema!");
+        let file = new File([res], "q.json", {
+            type: "text/plain",
+        });
+        var filename="Data-Puzzle-Schema" + "-" + nameOfSchema+ "-" + dd + "-" + month + ".json";
+        saveAs(file, filename);
+
+        return true;
+            
+    }
+</script>
+</body>
+
+</html>

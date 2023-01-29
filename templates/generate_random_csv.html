@@ -1,0 +1,128 @@
+<html>
+<script type="text/javascript">
+    let obj = JSON.parse('{{res|safe}}');
+    console.log("ATTRIBUTES WE HAVE RECEIVED FROM USER: ", obj);
+    let attributes = obj.base;
+</script>
+
+<head>
+
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" media="all" title="no title" charset="utf-8"/>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="/static/numerictarget.js"></script> -->
+    <style>
+        #waiting{
+        display: none;
+    }
+    </style>
+</head>
+
+
+
+<body>
+    <div class="container" style="margin-top:25px;">
+		<h2>GENERATE RANDOM CSV</h2>
+        <div>
+            <label>Write Filename:</label>
+            <input type="text" id="filename_csv" placeholder="Filename">.csv <br>
+            <label>Number of tuples:</label>
+            <input type="number" id="number_tuples" placeholder=""><br>
+            <input type="button"  value="Generate Random CSV" onclick="generateCSVRandom()"/>
+            <input type="button"  value="Go to Incremental CSV Page" onclick="goToIncremental()"/>
+        </div>
+        <div id="waiting">
+            Please Wait! Uploading CSV....
+            <div id="spinner"></div> 
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const spinner = document.getElementById("spinner");
+    const waiting=document.getElementById("waiting");
+    function showSpinner() {
+    spinner.className = "show";
+    waiting.style.display="block";
+    }
+
+    function hideSpinner() {
+        spinner.className = spinner.className.replace("show", "");
+        waiting.style.display="none";
+    }
+</script>
+<script>
+    function goToIncremental(){
+        window.location.href = "/newIncremental"
+    }
+    function generateCSVRandom(){
+        showSpinner();
+        var filename=document.getElementById("filename_csv").value;
+        var date = new Date()
+        var dd = String(date.getDate()).padStart(2, '0');
+        var month = date.toLocaleString('default', {
+            month: 'long'
+        });
+        console.log(filename);
+        filename="Data-Puzzle-"+filename+"--"+dd+month;
+        var tuples=document.getElementById("number_tuples").value;
+        console.log(attributes);
+        var main_csv="";
+        var setHead=true;
+        var head_csv="";
+        var total_attributes=attributes.length;
+        for(let i=0;i<tuples;i++){
+            let new_val_line="";
+            for(let j=0;j<attributes.length;j++){
+                let currobj=attributes[j];
+                if(setHead){
+                    head_csv+=currobj.attributeName;
+                    if(j!=total_attributes-1){
+                        head_csv+=",";
+                    }
+                }
+                let values=currobj.values;
+                let attribute_type=currobj.attributeType;
+                let attr_val="";
+                if(attribute_type=="numerical"){
+                    let high=values[1];
+                    let low=values[0]
+                    attr_val=getRandomIntInclusive(low,high);
+                }
+                else{
+                    attr_val = values[Math.floor(Math.random()*values.length)];
+                }
+                new_val_line+='"'+attr_val+'"';
+                if(j!=total_attributes-1){
+                    new_val_line+=",";
+                }
+            }
+            setHead=false;
+            main_csv+=new_val_line+"\n";
+        }
+        console.log(head_csv+"\n"+main_csv);
+        text=head_csv+"\n"+main_csv;
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename+".csv");
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+        hideSpinner();
+    }
+</script>
+<script>
+    function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min); 
+}
+</script>
+
+</html>

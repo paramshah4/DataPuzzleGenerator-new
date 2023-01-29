@@ -1,0 +1,232 @@
+body {
+    /* background: linear-gradient(to right, #000000, #C0C0C0); */
+    background: url(/static/bgpuzzle2.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    /* background-repeat: no-repeat; */
+    background-position: center center;
+}
+
+.accordionWrapper_left {
+    /* padding: 10px;
+    background: #fff; */
+    float: left;
+    width: 35%;
+    box-sizing: border-box;
+    margin: 2%;
+    /* box-shadow: 0 1.5em 85px 0 rgb(0 0 0 / 20%); */
+}
+
+.accordionWrapper {
+    /* padding: 30px;
+    background: #fff; */
+    float: left;
+    width: 95%;
+    box-sizing: border-box;
+    margin: 2%;
+    /* box-shadow: 0 1.5em 85px 0 rgba(0, 0, 0, 0.2); */
+}
+
+.accordionWrapper_right {
+    /* padding: 10px;
+    background: #fff; */
+    float: right;
+    width: 35%;
+    box-sizing: border-box;
+    margin: 2%;
+    /* box-shadow: 0 1.5em 85px 0 rgb(0 0 0 / 20%); */
+}
+
+.launch {
+    padding-top: 45%;
+    padding-left: 50%;
+}
+
+.accordionItem {
+    float: left;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Open-sans', Arial, sans-serif;
+    border-radius: 15px;
+}
+
+.open .accordionItem {
+    border-radius: 15px;
+}
+
+.heading {
+    font-family: 'Signika Negative', sans-serif;
+    text-align: center;
+    padding-top: 50px;
+    font-size: 100;
+    color: darkslateblue;
+}
+
+.stepper .line {
+    width: 2px;
+    background-color: lightgrey !important;
+}
+
+.stepper .lead {
+    font-size: 1.1rem;
+}
+
+h4 {
+    font-weight: 100;
+}
+
+.accordionItemHeading {
+    border-radius: 15px;
+    cursor: pointer;
+    margin: 0px 0px 10px 0px;
+    padding: 10px;
+    background: darkblue;
+    color: white;
+    width: 100%;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    font-family: 'Cabin', sans-serif;
+    background-image: linear-gradient(45deg, transparent 50%, #0c3be8 50%), linear-gradient(135deg, #0c3be8 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-repeat: no-repeat;
+}
+
+.btn-outline-danger {
+    border-color: darkblue;
+}
+
+.accordionItem.close {
+    opacity: 1;
+}
+
+.close .accordionItemContent {
+    border-radius: 15px;
+    height: 0px;
+    transition: height 1s ease-out;
+    -webkit-transform: scaleY(0);
+    -o-transform: scaleY(0);
+    -ms-transform: scaleY(0);
+    transform: scaleY(0);
+    float: left;
+    display: block;
+}
+
+.open .accordionItemContent {
+    border-radius: 15px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    width: 100%;
+    margin: 0px 0px 10px 0px;
+    display: block;
+    -webkit-transform: scaleY(1);
+    -o-transform: scaleY(1);
+    -ms-transform: scaleY(1);
+    transform: scaleY(1);
+    -webkit-transform-origin: top;
+    -o-transform-origin: top;
+    -ms-transform-origin: top;
+    transform-origin: top;
+    -webkit-transition: -webkit-transform 0.4s ease-out;
+    -o-transition: -o-transform 0.4s ease;
+    -ms-transition: -ms-transform 0.4s ease;
+    transition: transform 0.4s ease;
+    box-sizing: border-box;
+}
+
+.open .accordionItemHeading {
+    margin: 0px;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    -webkit-border-bottom-right-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -moz-border-radius-bottomright: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+    background-image: linear-gradient(45deg, #0c3be8 50%, transparent 50%), linear-gradient(135deg, transparent 50%, #0c3be8 50%), linear-gradient(to right, #ccc, #ccc);
+    background-position: calc(100% - 15px) 1em, calc(100% - 20px) 1em, calc(100% - 2.5em) 0.5em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-repeat: no-repeat;
+    border-color: #0c3be8;
+    outline: 0;
+}
+
+body {
+    font: 600 14px/24px "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Sans-Serif;
+    margin: 12px 0;
+}
+
+.card-container {
+    cursor: pointer;
+    height: 150px;
+    perspective: 600;
+    position: relative;
+    width: 150px;
+}
+
+select.round {
+    background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), radial-gradient(#ddd 70%, transparent 72%);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - .5em) .5em;
+    background-size: 5px 5px, 5px 5px, 1.5em 1.5em;
+    background-repeat: no-repeat;
+}
+
+select.round:focus {
+    background-image: linear-gradient(45deg, white 50%, transparent 50%), linear-gradient(135deg, transparent 50%, white 50%), radial-gradient(gray 70%, transparent 72%);
+    background-position: calc(100% - 15px) 1em, calc(100% - 20px) 1em, calc(100% - .5em) .5em;
+    background-size: 5px 5px, 5px 5px, 1.5em 1.5em;
+    background-repeat: no-repeat;
+    border-color: green;
+    outline: 0;
+}
+
+.card {
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: all 1s ease-in-out;
+    width: 100%;
+}
+
+.card:hover {
+    transform: rotateY(180deg);
+}
+
+.card .side {
+    backface-visibility: hidden;
+    border-radius: 6px;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+}
+
+.card .back {
+    background: #eaeaed;
+    color: #0087cc;
+    line-height: 150px;
+    text-align: center;
+    transform: rotateY(180deg);
+}
+
+.bg-primary {
+    background-color: black!important;
+}
+
+.Banner8 {
+    background-color: #B71C1C;
+    height: 50px;
+}

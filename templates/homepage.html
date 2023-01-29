@@ -1,0 +1,933 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Exo+2:wght@200&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/homepage.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+
+</head>
+
+
+<!-- <h1 class="heading">Data Puzzle Generator</h1>  -->
+
+
+
+<div class="Banner8" style="background-color: darkblue; height: 100px">
+    <center>
+        <!-- <font face="Courier New" size="10" color="white" style="padding-top: 20px;">Data Puzzle Generator</font> -->
+        <h1 class="banner" style="padding-top: 10px; font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;font-variant: small-caps;
+        text-transform: capitalize; color: white; letter-spacing: 4.8px;font-size: 70px">Data Puzzle Generator</p>
+
+    </center>
+</div>
+
+<div class="accordionWrapper_right">
+
+
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading">Generate data using different distributions </h4>
+
+        <div class="accordionItemContent">
+            <div style="text-align: center;">
+                <input type="button" name="powerlaw" value="Start with power law" onclick="showDiv()" />
+
+
+                <div id="powerlawdiv" style="display:none;">
+                    Range (Minimum): <input type="text" id="range_1" name="range_1">
+                    <br>Range (Maximum): <input type="text" id="range_2" name="range_2">
+                    <br>Exponent value: <input type="text" id="expvalue" name="expvalue">
+                    <br>Name of the attribute <input type="text" id="attr_name" name="attr_name">
+                    <hr> Number of Tuples: <input type="text" id="number_tuple" name="number_tuple">
+                    <br>
+                    <div style="padding-top: 25px;">
+                        <input type="Submit" value="Generate data using power law" onclick="server_call_forpowerlaw()" />
+                    </div>
+                    <!-- <div id="powerlawphoto" style="display:none;">
+                        <img src="/static/powerlaw.png">
+                    </div> -->
+
+                </div>
+
+
+
+                <input type="button" name="powerlaw" value="Start with Gaussian Distribution" onclick="showDiv_gl()" />
+
+
+                <div id="guassianlawdiv" style="display:none;">
+                    Mean: <input type="text" id="mean" name="mean">
+                    <br>Standard Deviation: <input type="text" id="sd" name="sd">
+                    <br>Name of the attribute <input type="text" id="attr_name_gl" name="attr_name_gl">
+                    <hr> Number of Tuples: <input type="text" id="number_tuple_gl" name="number_tuple_gl">
+                    <br>
+                    <div style="padding-top: 25px;">
+                        <input type="Submit" value="Generate data using Gaussian Distribution" onclick="server_call_forguasslaw()" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div class="accordionWrapper_left">
+
+    <!--<div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 50%;">Description</h4>
+        <div class="accordionItemContent">
+            <p style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-size: large;">Data Puzzle Generator is a tool which helps professors to create data puzzles as per the rules provided. All the rules can be customized. This project is developed under guidance by Prof. Tomasz Imielinski. This tool will enable professors
+                to save around 70% of time.</p>
+            <p style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; font-size: large;">You can generate the schema of your choice for the dataset. Also you can provide the rules and distributions using which you want the data to be generated. One can also provide derived attribute(s). In that case, users will have to provide
+                .py file which defines all the derived attributes. And at the last data will be generated of given length.</p>
+        </div>
+    </div>-->
+
+    <!--<div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 70%;">Steps on how to use the tool</h4>
+        <div class="accordionItemContent">
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark" style="font-weight: bold;">Step 1:Creating a schema</h5>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">1.1</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">The first step to generate dataset is to generate schema. You can either upload your already saved schema file or can generate schema from scratch</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">1.2</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">You can add as many attributes as you want. The attributes can be numerical or categorical depending on the user requirements. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">1.3</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">If the attribute is numerical, provide the range for the attribute, i.e. the upper bound and lower bound for that attribute. If the attribute is categorical, you have to give the values for the categorical attribute separatedby
+                                    comma. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">1.4</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Once you have added all the attributes, click on "Submit" button. If the schema was not saved on you machine, the tool will ask the name of the file and save the schema in your machine and all the schemas downloaded will
+                                    have the same convention- "DataPuzzle-[filename_given_by_user]-schema-[DateMonth].json" . If the schema as at least 1 derived attribute, the tool will also download the blank python script which will also have the name
+                                    convention "DataPuzzle-[filename_given_by_user]-derivedcode-[derived_attribute_name]-[DateMonth].py"</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">1.5</div>
+                                <div class="line h-100 d-none"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">The tool will display a dialogue box asking you to choose whether the target variable is numerical or categorical. If your target variable is categorical click on "Ok" else, click on "Cancel". If your target variable is
+                                    categorical go to step 2 for further instructions else, go to step 3 for further instructions.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark" style="font-weight: bold;">Step 2: Creating a tree</h5>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.1</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Once we have generated schema, we have everything handy to generate rules. You can create different rules using the decision tree which is being used in this step.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.2</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">You can upload already saved tree file or if you are using the tool for the first time then you should consider to generate tree from scratch. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.3</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Select the target attribute and Provide the default distribution before starting to create the decision tree. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.4</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Along the root node, you can see the dropdown which contains all the attributes you have added in your schema. You can select any attribute and it will be added as child node to the current node.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.5</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">If selected attribute is categorical, you will be asked to choose from the domain of that attribute. If selected attribute is numerical, you will be asked to provide the split value.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.6</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">If you are done with a branch, you can provide distribution. If no distribution provided to leaf node then default distribution will be considered.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">2.7</div>
+                                <div class="line h-100 d-none"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Just like the Attribute Schema, it will save equivalent ".json" file in your local system. You can upload this downloaded ".json" file, and system will render the tree you had generated previously. You can also modify this
+                                    tree. All the tree files will also be downloaded with the name convention : "DataPuzzle-[filename-given_by_user]-tree-[DateMonth].json"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">3</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark" style="font-weight: bold;">Step 3 : Generating and downloading the data</h5>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">3.1</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">Now that Schema and Tree has been generated, we are all set to generate synthetic data. Last step depends upon whether you have any derived attribute in your schema. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">3.2</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">If your schema contains any derived attribute, then you will be asked to provide definition of these attributes. You will also have to provide base attributes on which derived attribute depends. But if it doesn’t contain
+                                    any derived attribute, then you will not be asked for these inputs. </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">3.3</div>
+                                <div class="line h-100"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">And then you will have to provide number of tuples to be generated. Click on the "Generate and Download data" to download the final data in csv format. All the tree files will also be downloaded with the name convention
+                                    : "DataPuzzle-[filename-given_by_user]-csv-[DateMonth].csv " </p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-1" style="padding-top: 20px;">
+                            <div class="d-flex flex-column pr-4 align-items-center">
+                                <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1" style="background-color: darkblue!important">3.4</div>
+                                <div class="line h-100 d-none"></div>
+                            </div>
+                            <div>
+                                <p class="lead text-muted pb-3" style="font-size:15px;">To know how accurate your data is click on the "Validate and get the accuracy". If the target variable is categorical , it will give the output in terms of percentage and if the target variable is numerical then it will
+                                    display the MSE.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <img src="/static/flowchart.png" style="width: 80%; padding-left: 30%;" alt="schema_image" />
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="accordionWrapper">
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 25%;">Demo(Target- Categorical)</h4>
+        <div class="accordionItemContent">
+            <h5> Let us see how the tool works using a simple example without using the derived attribute. In the below steps we will be generating a dataset using Professor Moody's rules to grade any student.</h5>
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 1</h5>
+                        <p class="lead text-muted pb-3">Our first step is to create a schema file. In this schema file, we define the attributes which will be used to generate the required data.</p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="schemajson" href="/static/DataPuzzle-moodycore-schema-26August.json" download="DataPuzzle-Moody_schema.json">DataPuzzle-Moody_schema.json</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">After uploading the json file or creating the schema from scratch would be seen below. Right image shows the screenshot of the tool after adding all attributes. The left image shows how json file looks like after downloading the
+                            schema.
+                        </p>
+                        <table>
+                            <tr>
+                                <td align="left" style="padding-left: 150px;"><textarea id="result" style="width: 35rem; height: 45rem; resize: none;" disabled></textarea></td>
+                                <td align="right"> <img src="/static/moody_schemasample.png" alt="schema_image" /></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 2</h5>
+                        <p class="lead text-muted pb-3">Creating a tree requires user input decision tree:</p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="treejson" href="/static/DataPuzzle-moody_diffprobs-tree-23August.json" download="DataPuzzle-Moody_tree.json">DataPuzzle-Moody_tree.json</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">You can either upload the saved tree file or can start from scrach. In order to generate tree from scratch, following steps need to be taken. </p>
+                        <p class="lead text-muted pb-3">
+                            <ul>
+                                <li>
+                                    <p class="lead text-muted pb-3">Select the target variable(It can be seen at the top as "To Do":)</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">Provide default distribution.(It can be seen at the top and all percentages should add upto 100)</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">Add all rules as per requirement(select any attribute from dropdown menu and define the distribution for the leaf node only)</p>
+                                </li>
+                            </ul>
+                        </p>
+                        <p class="lead text-muted pb-3"> After uploading the json file or creating the tree from scratch would be seen as:</p>
+                        <table>
+                            <tr>
+                                <td align="left"><textarea id="result1" style="width: 22rem; height: 45rem; resize: none;" disabled></textarea></td>
+                                <td align="right"> <img src="/static/moody_treesample_modified.png" alt="schema_image" /></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">3</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 3</h5>
+                        <p class="lead text-muted pb-3">After you are done with tree and schemas, it's time to generate the final data. The final page would look something like this:
+
+                        </p>
+                        <br>
+                        <img src="/static/moody_datagen.png" style="width: 100%;" alt="datagen_image" />
+                        <p class="lead text-muted pb-3"> Enter the number of tuples and click on "Generate and Download Data". This would generate the required Data Puzzle. Below is sample for demo purpose.
+                            <br><a style="color: darkblue;" id="finalcsvfile" href="/static/DataPuzzle-moodycore-csv-20October.csv" download="DataPuzzle-Moody_data.csv">DataPuzzle-Moody_data.csv</a></p>
+                        <p class="lead text-muted pb-3"> Validate and get the accuracy: By clicking on this button, you will get the accuracy of the data generated from the tool. When we define the distribution for the leaf node in tree, there can be an error in assigning the final value
+                            for that decision node. For example if we have a node where we assign distribution as (90,10) corresonding to ("Pass","Fail"), there will be some error when we assign the final grade for the student since the distribution is
+                            not (100,0). The tool catches these overall errors by generating a new column which has no error and the calculates the average of the final column generated by the tool and the final column generated after clicking on the
+                            button. The final accuracy shown by the tool is generated after collecting all the errors which we get from the distribution provided by the user.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 25%;">Demo(Target- Categorical)(Derived Attribute)</h4>
+        <div class="accordionItemContent">
+            <h5> Let us see how the tool works using a simple example using the derived attribute when the target variable domain is categorical. In the below steps we will be generating a dataset using Professor Moody's rules to grade the students.</h5>
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 1</h5>
+                        <p class="lead text-muted pb-3">Our first step is to create a schema file. In this schema file, we define the attributes which will be used to generate the required data. We are using the same example as used above, but instead of using "Score" attribute, we
+                            are using 2 attributes and one derived attribute. In this case we introduce 2 non-derived attributes- "Exams" and "Project". The derived attribute "CombScore" is now dependent on the 2 attributes-"Exams" and "Project". As we
+                            can see in the below image, that we we have chosen "Yes" radio button for "Derived Attribute" for CombScore attribute. </p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="schemajson" href="/static/docsforcatderived/DataPuzzle-moody_derived-schema-27September.json" download="DataPuzzle-Moody_derived_schema.json">DataPuzzle-Moody_derived_schema.json</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">After uploading the json file or creating the schema from scratch would be seen below. Right image shows the screenshot of the tool after adding all attributes. The left image shows how json file looks like after downloading the
+                            schema.
+                        </p>
+                        <table>
+                            <tr>
+                                <td align="left" style="padding-left: 150px;"><textarea id="result2" style="width: 35rem; height: 45rem; resize: none;" disabled></textarea></td>
+                                <td align="right"> <img src="/static/docsforcatderived/schema_derivedcat_ss.png" alt="schema_image" /></td>
+                            </tr>
+                        </table>
+                        <p class="lead text-muted pb-3"> After clicking on "Submit" button,if the schema was made from scratch , the too. This python script will be required in step 3. </p>
+                        <p class="lead text-muted pb-3">
+                            <ul>
+                                <li>
+                                    <p class="lead text-muted pb-3">It will ask to the file name and the file will be saved in your machine.</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">It will also download the python script in the format "DataPuzzle-moody_derived-derivedcode-[name_of_the_derived_attribute]-[DateMonth].py".</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">The tool will display a confirmation box asking whether the tagret variable is categorical or not. Click on "Yes".</p>
+                                </li>
+                            </ul>
+                        </p>
+
+
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 2</h5>
+                        <p class="lead text-muted pb-3">Creating a tree requires user input decision tree:</p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="treejson" href="/static/docsforcatderived/DataPuzzle-moody_derived-tree-1-27September.json" download="DataPuzzle-Moody_derived_tree.json">DataPuzzle-Moody_derived_tree.json</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">You can either upload the saved tree file or can start from scrach. In order to generate tree from scratch, following steps need to be taken. </p>
+                        <p class="lead text-muted pb-3">
+                            <ul>
+                                <li>
+                                    <p class="lead text-muted pb-3">Select the target variable(It can be seen at the top as "To Do":)</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">Provide default distribution.(It can be seen at the top and all percentages should add upto 100)</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">Add all rules as per requirement(select any attribute from dropdown menu and define the distribution for the leaf node only). Here the derived attributes are taken into consideration to build the decision tree just
+                                        like any other attribute as we have done earlier.</p>
+                                </li>
+                            </ul>
+                        </p>
+                        <p class="lead text-muted pb-3"> After uploading the json file or creating the tree from scratch would be seen as:</p>
+                        <table>
+                            <tr>
+                                <td align="left"><textarea id="result3" style="width: 22rem; height: 45rem; resize: none;" disabled></textarea></td>
+                                <td align="right"> <img src="/static/docsforcatderived/tree_derivedcat_ss.png" alt="schema_image" /></td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">3</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 3</h5>
+                        <p class="lead text-muted pb-3">After you are done with tree and schemas, it's time to generate the final data. The final page would look something like this:
+
+                        </p>
+                        <br>
+                        <img src="/static/docsforcatderived/finalstep_derivedcat_ss.png" style="width: 60%;" alt="datagen_image" />
+                        <p class="lead text-muted pb-3">Open the python script which was downloaded in your machine in Step 1 using any editor. Write the code for the derived attribute in the python script and save the written code in that file. Upload the same file by clicking on the
+                            button "Choose File" under the section "Upload Derived Attribute's definition code". </p>
+                        <p class="lead text-muted pb-3">The python script is shown below:</p>
+                        <img src="/static/docsforcatderived/derivedcode_derivedcat_ss.png" style="width: 40%;" alt="datagen_image_pythoncode" />
+                        <p class="lead text-muted pb-3">"Name of the attribute" is autofilled by the tool which indicates the derived attribute on which you are working on currently.</p>
+                        <p class="lead text-muted pb-3">Click on the attributes which are used as the arguments for the function written in python.</p>
+                        <p class="lead text-muted pb-3">By default all the derived attributes will be masked. In other words, they will not be included in final generated data. However, if you want some of the derived attributes to be unmasked, you can check "Yes" for those attributes.
+                            And they will be included in the final generated synthetic data.</p>
+                        <p class="lead text-muted pb-3">For every derived attribute you will need to upload the python script and click on those arguments needed by the python script.</p>
+                        <p class="lead text-muted pb-3"> Enter the number of tuples and click on "Generate and Download Data". This would generate the required Data Puzzle. Below is sample for demo purpose.
+                            <br><a style="color: darkblue;" id="finalcsvfile" href="/static/docsforcatderived/DataPuzzle-moody_derived-csv-7-01December.csv" download="DataPuzzle-Moody_derived_data.csv">DataPuzzle-Moody_derived_data.csv</a></p>
+                        <p class="lead text-muted pb-3"> Validate and get the accuracy: By clicking on this button, you will get the accuracy of the data generated from the tool. When we define the distribution for the leaf node in tree, there can be an error in assigning the final value
+                            for that decision node. For example if we have a node where we assign distribution as (90,10) corresonding to ("Pass","Fail"), there will be some error when we assign the final grade for the student since the distribution is
+                            not (100,0). The tool catches these overall errors by generating a new column which has no error and the calculates the average of the final column generated by the tool and the final column generated after clicking on the
+                            button. The final accuracy shown by the tool is generated after collecting all the errors which we get from the distribution provided by the user.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 25%;">Demo(Target- Numerical)</h4>
+        <div class="accordionItemContent">
+            <h5> Let us see how the tool works using a simple example using the derived attribute when the target variable domain is categorical. In the below steps we will be generating a dataset using Professor Moody's rules to grade the students.</h5>
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 1</h5>
+                        <p class="lead text-muted pb-3">Our first step is to create a schema file. In this schema file, we define the attributes which will be used to generate the required data. This example involves generating the "Earnings" column which is dependent on different attributes
+                            mentioned in schema. </p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="schemajson" href="/static/docsfornumtarget/DataPuzzle-earnings_challenge-schema-02September.json" download="DataPuzzle-earnings_schema.json">DataPuzzle-earnings_schema.json</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">After uploading the json file or creating the schema from scratch would be seen below. Right image shows the screenshot of the tool after adding all attributes. The left image shows how json file looks like after downloading the
+                            schema.
+                        </p>
+                        <table>
+                            <tr>
+                                <td align="left" style="padding-left: 150px;"><textarea id="result4" style="width: 35rem; height: 45rem; resize: none;" disabled></textarea></td>
+                                <td align="right"> <img src="/static/docsfornumtarget/schema_numtar_ss.png" alt="schema_image" /></td>
+                            </tr>
+                        </table>
+                        <p class="lead text-muted pb-3"> After clicking on "Submit" button, following steps will be taken by the tool: </p>
+                        <p class="lead text-muted pb-3">
+                            <ul>
+                                <li>
+                                    <p class="lead text-muted pb-3">If the schema was made from scratch , the tool will ask to the file name and the file will be saved in your machine.</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">It will also download the python script in the format "DataPuzzle-moody_derived-derivedcode-[name_of_the_derived_attribute]-[DateMonth].py".This python script will be required in step 3.</p>
+                                </li>
+                                <li>
+                                    <p class="lead text-muted pb-3">The tool will display a confirmation box asking whether the tagret variable is categorical or not. Click on "Cancel".</p>
+                                </li>
+                            </ul>
+                        </p>
+
+
+                    </div>
+                </div>
+
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 2</h5>
+                        <p class="lead text-muted pb-3">Since the target variable is numerical, we do not require the Decision tree building step as we did in previous two demos. The final page would look something like this:
+
+                        </p>
+                        <br>
+                        <img src="/static/docsfornumtarget/finalstep_numtar_ss.png" style="width: 40%;" alt="datagen_image" />
+                        <p class="lead text-muted pb-3">Open the python script which was downloaded in your machine in Step 1 using any editor. Write the code for the derived attribute in the python script and save the written code in that file. Upload the same file by clicking on the
+                            button "Choose File" under the section "Upload Derived Attribute's definition code". </p>
+                        <p class="lead text-muted pb-3">The python script is shown below:</p>
+                        <img src="/static/docsfornumtarget/derivedcode_numtar_ss.png" style="width: 40%;" alt="datagen_image_pythoncode" />
+                        <p class="lead text-muted pb-3">"Name of the attribute" is autofilled by the tool which indicates the derived attribute on which you are working on currently.</p>
+                        <p class="lead text-muted pb-3">Click on the attributes which are used as the arguments for the function written in python.</p>
+                        <p class="lead text-muted pb-3">For every derived attribute you will need to upload the python script and click on those arguments needed by the python script.</p>
+                        <p class="lead text-muted pb-3"> Enter the number of tuples and click on "Generate and Download Data". This would generate the required Data Puzzle. Below is sample for demo purpose.
+                            <br><a style="color: darkblue;" id="finalcsvfile" href="/static/docsfornumtarget/DataPuzzle-earnings_challenge-csv-6-01December.csv" download="DataPuzzle-earnings_data.csv">DataPuzzle-earnings_data.csv</a></p>
+                        <p class="lead text-muted pb-3"> Validate and get the accuracy: By clicking on this button, you will get the accuracy of the data generated from the tool. When we define the distribution for the leaf node in tree, there can be an error in assigning the final value
+                            for that decision node. For example if we have a node where we assign distribution as (90,10) corresonding to ("Pass","Fail"), there will be some error when we assign the final grade for the student since the distribution is
+                            not (100,0). The tool catches these overall errors by generating a new column which has no error and the calculates the average of the final column generated by the tool and the final column generated after clicking on the
+                            button. The final accuracy shown by the tool is generated after collecting all the errors which we get from the distribution provided by the user.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>-->
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 75%;">Demo(Generate Random CSV)</h4>
+        <div class="accordionItemContent" style="width: 300%;">
+            <h5> The following are the steps to use the tool's Generate Random CSV feature. Using this feature, a dataset can be generated that has the attributes that have been specified by the user and the dataset will contain
+                the number of tuples that have been specified by the user and each tuple will contain values from the domain of values specified for each of the attributes.
+            </h5>
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 1</h5>
+                        <p class="lead text-muted pb-3"> Click on Launch Tool button on the homepage </p>
+                        <p class="lead text-muted pb-3"> Click on the Add Attribute button to add the attributes, the attribute type and the domain values</p>
+                        <p class="lead text-muted pb-3">For the purpose of this demo, we will be adding the following attributes that are shown in the image below:</p>
+                        <img src="/static/docsforgeneraterandom/Generate_Random_CSV.png" alt="GenerateImage" style="width: 50%;"/>
+                        <p class="lead text-muted pb-3">Now, click on "Generate Random CSV" button. The following page appears</p>
+                        <img src="/static/docsforgeneraterandom/GenerateRandomCSV2.png" alt="GenerateImage2" style="width: 50%;"/>
+                        <p class="lead text-muted pb-3">Now, we need to specify the file name and the number of tuples</p>
+                        <p class="lead text-muted pb-3">Lastly, click on the Generate Random CSV button to generate and download the randomly generated CSV</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="accordionItem close">
+        <h4 class="accordionItemHeading" style="width: 75%;">Demo(New Incremental CSV)</h4>
+        <div class="accordionItemContent" style="width: 300%;">
+            <h5> The following are the steps to use the tool's Incremental CSV Feature by uploading a dataset(CSV file) as a table in MYSQL database and then using SQL queries to set rules in the dataset and then finally downloading the updated dataset back as a CSV file.</h5>
+            <div class="stepper d-flex flex-column mt-5 ml-2">
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">1</div>
+                        <div class="line h-100"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 1</h5>
+                        <p class="lead text-muted pb-3"> Click on Launch Tool button on the homepage </p>
+                        <p class="lead text-muted pb-3"> Click on the Go button to go to the New Incremental CSV page </p>
+                        <p class="lead text-muted pb-3">Our first step is to upload a CSV which we will call the primary file. A second auxillary file can also be uploaded if required.</p>
+                        <p class="lead text-muted pb-3">We will be using the file Moode_shortened.csv for the purpose of this demonstration</p>
+                        <p class="lead text-muted pb-3">
+                            <a style="color: darkblue;" id="democsvfile" href="/static/docsforincremental/Moody_shortened.csv" download="Moody_shortened.csv">Moody_shortened.csv</a>
+                        </p>
+                        <br>
+                        <p class="lead text-muted pb-3">Once the file is uploaded the attributes(column headers of the csv) are listed in the drop down. </p>
+                        <p class="lead text-muted pb-3">Now we need to select our target variable and it's type depending on whether it is a categorical attribute or a numeric attribute.</p>
+                        <p class="lead text-muted pb-3">In the image shown below: Attribute "Grade" has been selected as the target attribute and it's type is "Categorical Attribute".</p>
+                        <img src="/static/docsforincremental/TargetAttribute.png" alt="TargetAttributeImage" style="width: 50%;"/>
+                        <p class="lead text-muted pb-3">Now, click on "Generate Tables" button. </p>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">2</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 2</h5>
+                        <p class="lead text-muted pb-3">Once the "Generate Tables" button has been clicked we see a page as shown in the image below </p>
+                        <img src="/static/docsforincremental/PostGenerateTestTable.png" alt="TargetAttributeImage" style="width: 40%;"/>
+                        <br>
+                        <p>Now, as shown in the above image, the name of the table(s) in the database along with their column names have been displayed.</p>
+                        <p>We can write the SQL queries in the query box provided: Say we write "UPDATE primary_table set GRADE = 'A' WHERE SCORE >= 75;
+                            UPDATE primary_table set GRADE = 'F' WHERE SCORE < 50;". Now, on pressing the "Run Query" button the queries will be executed and 
+                            result of the execution are displayed under the Query History. This is shown in the image below</p>
+                        <img src="/static/docsforincremental/ExecutedQueries.png" style="width: 40%;" alt="datagen_image" />
+                        <p class="lead text-muted pb-3">Now, if needed then we can add noise to our data. Say we add 5% noise. Then it will again display the number of tuples that were affected.</p>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-1">
+                    <div class="d-flex flex-column pr-4 align-items-center">
+                        <div class="rounded-circle py-2 px-3 bg-primary text-white mb-1">3</div>
+                        <div class="line h-100 d-none"></div>
+                    </div>
+                    <div>
+                        <h5 class="text-dark">Step 3</h5>
+                        <p class="lead text-muted pb-3">Now, click on verification to know the percentage of tuples that were not affected by the queries that were executed earlier.</p>
+                        <img src="/static/docsforincremental/Verification1.png" style="width: 40%;" alt="datagen_image" />
+                        <p class="lead text-muted pb-3">Now, we have two options we can either continue to write queries to keep updating the tables or we can randomly update the unaffected values and get the error percentage.</p>
+                        <p class="lead text-muted pb-3">Now, we can use one of the three download buttons</p>
+                        <p class="lead text-muted pb-3"> 1. Download new csv and query history - This downloads the data set that we have created and the queries that were executed to create it.</p>
+                        <p class="lead text-muted pb-3"> 2. Download query history - This downloads the queries that have been executed till now as a text file.</p>
+                        <p class="lead text-muted pb-3"> 3. Download all as zip file - This downloads the newly created dataset, the query history and the original csv file as a single zip file.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+
+
+
+</div>
+</div>
+<div id="launch" style="padding-top: 2%;padding-left: 45%; border-radius: 15px;">
+    <form action="getlaunchtool" method="POST">
+
+        <input value="Launch tool" class="btn btn-outline-danger" style="color:white ;background-color: darkblue;padding-top: 15px;padding-bottom: 15px;padding-right: 15px;padding-left: 15px;font-size: 20px;border-radius: 17px;" type="Submit" />
+    </form>
+</div>
+<script>
+    var accItem = document.getElementsByClassName('accordionItem');
+    var accHD = document.getElementsByClassName('accordionItemHeading');
+    for (i = 0; i < accHD.length; i++) {
+        accHD[i].addEventListener('click', toggleItem, false);
+    }
+
+    function toggleItem() {
+        var itemClass = this.parentNode.className;
+        for (i = 0; i < accItem.length; i++) {
+            accItem[i].className = 'accordionItem close';
+        }
+        if (itemClass == 'accordionItem close') {
+            this.parentNode.className = 'accordionItem open';
+        }
+    }
+</script>
+
+<script>
+    function showDiv() {
+        document.getElementById('powerlawdiv').style.display = "block";
+        document.getElementById('powerlawdiv').style.padding = "25px";
+    }
+
+    function showDiv_gl() {
+        document.getElementById('guassianlawdiv').style.display = "block";
+        document.getElementById('guassianlawdiv').style.padding = "25px";
+    }
+
+    function validate_entries_gl() {
+        if (document.getElementById("mean").value == "" || document.getElementById("sd").value == "" || document.getElementById("number_tuple_gl").value == "" || document.getElementById("attr_name_gl").value == "") {
+            alert("Please fill all the required details to generate Gaussian law!")
+            return false
+        }
+        return true
+
+    }
+
+    function validate_entries() {
+        if (document.getElementById("range_1").value == "" || document.getElementById("expvalue").value == "" || document.getElementById("range_2").value == "" || document.getElementById("number_tuple").value == "" || document.getElementById("attr_name").value == "") {
+            alert("Please fill all the required details to generate power law!")
+            return false
+        }
+        return true
+
+    }
+
+    function download_csv(obj, fname) {
+        console.log("obj:", obj)
+        console.log("obj['data']", obj["data"])
+        var data = obj["data"];
+        var csv = '';
+        var header = []
+        var rows = []
+
+        for (var x = 0; x < obj["cols"].length; x++) {
+            csv += obj["cols"][x] + ",";
+        }
+        for (var x = 0; x < obj["cols"].length; x++) {
+            header.push(obj["cols"][x]);
+        }
+
+        data.forEach(function(row) {
+            rows.push(row)
+        });
+        console.log("rows")
+        console.log(rows)
+
+        if (csv.length > 0) {
+            csv = csv.slice(0, -1);
+        }
+
+        csv += "\n";
+
+        data.forEach(function(row) {
+            csv += row;
+            csv += "\n";
+        });
+        console.log(csv)
+        let file = new File([csv], "fe.csv", {
+            type: "text/plain",
+        });
+        var formdata = new FormData();
+        formdata.append("file", file);
+        formdata.append("filename", fname)
+            // formdata.append("filename", document.getElementById("file_name").value)
+        var SERVER_URL = window.location.protocol + "//" + window.location.host;
+        var REST_CALL = SERVER_URL + "/downloadcsvdistribution";
+
+        $.ajax({
+            url: REST_CALL,
+            data: formdata,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function(data) {
+                var date = new Date()
+                var dd = String(date.getDate()).padStart(2, '0');
+                var month = date.toLocaleString('default', {
+                    month: 'long'
+                });
+                if (data.includes("Error")) {
+                    filename = prompt(data);
+                    filename = "DataPuzzle-" + filename + "-csv-" + dd + month
+                } else {
+                    if (data.includes("-")) {
+                        filename = "DataPuzzle-" + data.split("-")[0] + "-csv-" + data.split("-")[1] + "-" + dd + month
+                    } else {
+                        filename = "DataPuzzle-" + data.split("-")[0] + "-csv-" + dd + month
+                    }
+                }
+
+                saveAs(file, filename + ".csv");
+
+
+            }
+        });
+
+    }
+
+    function server_call_forpowerlaw() {
+        if (!validate_entries()) {
+            return;
+        }
+        var range0 = document.getElementById("range_1").value;
+        var range1 = document.getElementById("range_2").value;
+        var n = document.getElementById("expvalue").value;
+        var tuples = document.getElementById("number_tuple").value;
+        var attrname = document.getElementById("attr_name").value
+
+        var inp_powerlaw = {
+            "range0": range0,
+            "range1": range1,
+            "n": n,
+            "tuples": tuples,
+            "attrname": attrname
+        }
+        var formData = new FormData();
+        formData.append("inp_powerlaw", JSON.stringify(inp_powerlaw));
+        var SERVER_URL = window.location.protocol + "//" + window.location.host;
+        var REST_API = SERVER_URL + "/powerlawgeneration";
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", REST_API, true);
+
+        xhttp.onload = function(e) {
+            if (xhttp.readyState === 4) {
+                if (xhttp.status === 200) {
+                    /*
+                    var data = JSON.parse(xhttp.responseText);
+                    download_csv(data, name);
+                    */
+                    console.log("RESPONSE RECEIVED!");
+                    var data = JSON.parse(xhttp.responseText);
+
+                    if ("error" in data) {
+                        alert(data["error"]);
+                    } else {
+                        download_csv(data, "PowerLaw");
+                    }
+                } else {
+                    alert("Error Occured! Check logs");
+                    console.error("Server error: ", xhttp.statusText);
+                }
+            }
+        };
+        xhttp.onerror = function(e) {
+            console.error("Error connecting to: ", SERVER_URL);
+        };
+
+        xhttp.send(formData);
+        // document.getElementById('powerlawphoto').style.display = "block";
+        // document.getElementById('powerlawphoto').style.padding = "25px";
+    }
+
+    function server_call_forguasslaw() {
+        if (!validate_entries_gl()) {
+            return;
+        }
+        var mean = document.getElementById("mean").value;
+        var sd = document.getElementById("sd").value;
+        var tuples = document.getElementById("number_tuple_gl").value;
+        var attrname = document.getElementById("attr_name_gl").value
+
+        var inp_gausslaw = {
+            "mean": mean,
+            "sd": sd,
+            "tuples": tuples,
+            "attrname": attrname
+        }
+        var formData = new FormData();
+        formData.append("inp_gausslaw", JSON.stringify(inp_gausslaw));
+        var SERVER_URL = window.location.protocol + "//" + window.location.host;
+        var REST_API = SERVER_URL + "/gausslawgeneration";
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("POST", REST_API, true);
+
+        xhttp.onload = function(e) {
+            if (xhttp.readyState === 4) {
+                if (xhttp.status === 200) {
+                    /*
+                    var data = JSON.parse(xhttp.responseText);
+                    download_csv(data, name);
+                    */
+                    console.log("RESPONSE RECEIVED!");
+                    var data = JSON.parse(xhttp.responseText);
+
+                    if ("error" in data) {
+                        alert(data["error"]);
+                    } else {
+                        download_csv(data, "GaussianDistribution");
+                    }
+                } else {
+                    alert("Error Occured! Check logs");
+                    console.error("Server error: ", xhttp.statusText);
+                }
+            }
+        };
+        xhttp.onerror = function(e) {
+            console.error("Error connecting to: ", SERVER_URL);
+        };
+
+        xhttp.send(formData);
+    }
+
+    function loadResultJson() {
+        let url = "/static/DataPuzzle-moodycore-schema-26August.json";
+        $.getJSON(url).then(data => {
+            let formatted = JSON.stringify(data, null, 2);
+            document.getElementById('result').value = formatted;
+        });
+        let url1 = "/static/DataPuzzle-moody_diffprobs-tree-23August.json";
+        $.getJSON(url1).then(data1 => {
+            let formatted1 = JSON.stringify(data1, null, 2);
+            document.getElementById('result1').value = formatted1;
+        });
+        let url2 = "/static/docsforcatderived/DataPuzzle-moody_derived-schema-27September.json";
+        $.getJSON(url2).then(data2 => {
+            let formatted2 = JSON.stringify(data2, null, 2);
+            document.getElementById('result2').value = formatted2;
+        });
+        let url3 = "/static/docsforcatderived/DataPuzzle-moody_derived-tree-1-27September.json";
+        $.getJSON(url3).then(data3 => {
+            let formatted3 = JSON.stringify(data3, null, 2);
+            document.getElementById('result3').value = formatted3;
+        });
+        let url4 = "/static/docsfornumtarget/DataPuzzle-earnings_challenge-schema-02September.json";
+        $.getJSON(url4).then(data4 => {
+            let formatted4 = JSON.stringify(data4, null, 2);
+            document.getElementById('result4').value = formatted4;
+        });
+    }
+
+    $('document').ready(_ => loadResultJson())
+</script>
+
+</html>

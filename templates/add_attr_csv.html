@@ -1,0 +1,214 @@
+<html>
+
+
+<head>
+
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" media="all" title="no title" charset="utf-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/add_attributes.js"></script>
+    <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+    <style>
+        #waiting{
+        display: none;
+    }
+    #add_more_attr{
+        display: none;
+        margin: 20px 0;
+    }
+    #attr_csv,.btns{
+        margin: 20px 0;
+    }
+
+    #download_result{
+        display: none;
+    }
+    </style>
+</head>
+
+
+
+<body>
+    <div class="container" style="margin-top:25px;">
+		<h2>Add Attributes To Existing CSV !</h2>
+        <div>
+            <label>Upload Existing CSV File</label>
+            <input type="file" id="csvFile" onchange="uploadCsvFile()" accept=".csv">
+        </div>
+        <div id="attr_csv">
+
+        </div>
+        <div id="add_more_attr">
+            <label>Add More Attributes</label>
+            <table>
+                <input type="text" id="entire_data" style="display:none" name="entire_data">
+                <tbody id="outerTable" style="">
+                </tbody>
+            </table>
+            <div class="btns">
+            <input type="button" value="Add Attribute" onclick="addAttribute()" />
+            <input type="button" value="Submit" onclick="generate_new_csv()" />
+          </div>
+          <div id="download_result">
+            <h4 id="download_result_h4">New CSV file has been downloaded successfully</h4>
+        </div>
+        </div>
+
+        <div id="waiting">
+            Please Wait! Uploading CSV....
+            <div id="spinner"></div> 
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const spinner = document.getElementById("spinner");
+    const waiting=document.getElementById("waiting");
+    function showSpinner() {
+    spinner.className = "show";
+    waiting.style.display="block";
+    }
+
+    function hideSpinner() {
+        spinner.className = spinner.className.replace("show", "");
+        waiting.style.display="none";
+    }
+</script>
+
+<script>
+    function uploadCsvFile(){
+        let uploadedCsvFile=document.getElementById('csvFile').files[0];
+        let reader = new FileReader()
+        reader.readAsText(uploadedCsvFile);
+        reader.onload = function(event) {
+            var final_data=[]
+            var csv = event.target.result;
+            var rows = csv.split('\n');
+            rows[0]=rows[0].trim();
+            document.getElementById('attr_csv').innerHTML='Attributes of uploaded csv file: '+ rows[0];
+            document.getElementById('add_more_attr').style.display='block';
+            document.getElementById('outerTable').innerHTML='';
+        }
+    }
+    function generate_new_csv(){
+        document.getElementById('download_result').style.display='none';
+        if(totalAttribute < 1){
+            alert('Please add attributes!')
+            return;
+        }
+        showSpinner()
+        var main_csv="";
+        var data=prepareData();
+        console.log(data)
+        input_data=data['base']
+        let headers_input=data['header']
+        let uploadedCsvFile=document.getElementById('csvFile').files[0];
+        let filename=uploadedCsvFile.name.replace(/.*[\/\\]/, '');
+        let reader = new FileReader()
+        reader.readAsText(uploadedCsvFile);
+        reader.onload = function(event) {
+            var csv = event.target.result;
+            var rows = csv.split('\n');
+            let headers=rows[0].trim();
+            headers+=","+headers_input+'\n';
+            for (var i = 1; i < rows.length; i++) {
+                let new_val_line=rows[i].trim()+','
+                for(var j=0;j<input_data.length;j++){
+                    let currobj=input_data[j];
+                    let values=currobj.values;
+                    let attribute_type=currobj.attributeType;
+                    let attr_val="";
+                    if(attribute_type=="numerical"){
+                        let high=values[1];
+                        let low=values[0];
+                        attr_val=getRandomIntInclusive(low,high);
+                    }
+                    else{
+                        attr_val = values[Math.floor(Math.random()*values.length)];
+                    }
+                    new_val_line+=attr_val;
+                    if(j!=input_data.length-1){
+                        new_val_line+=",";
+                    }
+                }
+                main_csv+=new_val_line+"\n";
+               
+            }
+            let final_csv=headers+main_csv
+            var newCsvFileName = createDownloadFileName(filename);
+            newCsvFileName = prompt("Download the new csv file as:", newCsvFileName);
+            if(!containsCsvExtension(newCsvFileName))
+            {
+                newCsvFileName = newCsvFileName + ".csv";
+            }
+            if (newCsvFileName != null) {
+                console.log(`Downloading file: ${newCsvFileName}`)
+                downloadFile(final_csv, newCsvFileName,"text/csv");
+                hideSpinner()
+                var text =  `New CSV file "${newCsvFileName}" has been downloaded successfully`;
+                $("#download_result_h4").html(text);
+                document.getElementById('download_result').style.display='block';
+            }
+            else
+            {
+                console.log(`User decided not to download the new csv file`);
+            }
+        }
+    }
+
+    function containsCsvExtension(fileName)
+    {
+        if(fileName.length >= 4)
+        {
+            var ext = fileName.substring(fileName.length - 4);
+            if(ext === ".csv".toLowerCase() || ext === ".csv".toUpperCase())
+                return true;
+            return false;
+        }
+        return false;
+    }
+
+    function createDownloadFileName(filename)
+    {
+        var date = new Date()
+        var dd = String(date.getDate()).padStart(2, '0');
+        var month = date.toLocaleString('default', {
+            month: 'long'
+        });
+        if(filename != undefined)
+        {
+            var newFileName =  removeExtensionFromFileName(filename) + "-" + "Plus" + dd + "-" + month + ".csv";
+            console.log(filename)
+            return newFileName;
+        }
+    }
+
+    function removeExtensionFromFileName(fileName)
+    {
+        var index = fileName.indexOf(".");
+        if(index != -1)
+        {
+            fileName = fileName.substring(0, index)
+            return fileName;
+        }
+    }
+
+    function downloadFile(text,filename,filetype)
+    {
+        let file = new File([text], filename, {
+            type: filetype,
+        });
+
+        saveAs(file, filename);
+    }
+
+</script>
+<script>
+    function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min); 
+}
+</script>
+</html>

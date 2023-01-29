@@ -1,0 +1,387 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Incremental CSV!</title>
+	<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" type="text/css" media="all" title="no title" charset="utf-8"/>
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+	
+	<style>
+    body { background-color:#fafafa; font-family:'Open Sans';}
+		.treetable .fa{
+			cursor: pointer;
+			padding-right: 5px;
+		}
+		.treetable .rowhidden{
+			display: none;
+		}
+		.treetable .j-addChild{
+			display: none;
+			margin-left: 50px;
+		}
+		.treetable .form-distribution{
+			margin-left: 80px;
+		}
+		.treetable .selected .j-addChild{
+			display: block;
+		}
+		.treetable .btn-outline{
+			background-color: transparent;
+		}
+		.treetable .form-control{
+			width: auto;
+			display: inline-block;
+		}
+		.treetable .textalign-center{
+			text-align: center;
+		}
+		.treetable .j-expend{
+			cursor: pointer;
+			width: 35% !important;
+			text-align: left !important;
+		}
+		.treetable .maintitle{
+			width: 40% !important;
+		}
+		.treetable .j-remove{
+			padding: 8px;
+			cursor: pointer;
+			font-size: 16px;
+			color:red;
+		}
+		.treetable .tt-header{
+			margin-top:10px;
+		}
+		.treetable .class-level-2 .class-level-ul .j-expend{
+			position: relative;
+			left: 22px;
+		}
+		.treetable .class-level-3 .class-level-ul .j-expend{
+			position: relative;
+			left: 44px;
+		}
+		.treetable .class-level-4 .class-level-ul .j-expend{
+			position: relative;
+			left: 66px;
+		}
+		.treetable .class-level-5 .class-level-ul .j-expend{
+			position: relative;
+			left: 88px;
+		}
+		.treetable .class-level-6 .class-level-ul .j-expend{
+			position: relative;
+			left: 110px;
+		}
+		.treetable .class-level-7 .class-level-ul .j-expend{
+			position: relative;
+			left: 132px;
+		}
+		.treetable .class-level-8 .class-level-ul .j-expend{
+			position: relative;
+			left: 154px;
+		}
+		.treetable .class-level-9 .class-level-ul .j-expend{
+			position: relative;
+			left: 176px;
+		}
+		.treetable .class-level-1 {
+			border-bottom: dashed 1px #eee;
+		}
+		.treetable .class-level-ul{
+			padding: 0;
+			margin-bottom: 2px;
+		}
+		.treetable .class-level-ul li {
+			float: left;
+			text-align: center;
+			vertical-align: middle;
+			padding: 1px 10px;
+			min-width: 100px;
+			list-style: none;
+		}
+		.treetable .class-level-ul:after {
+			display: block;
+			clear: both;
+			height: 0;
+			content: "\0020";
+		}
+		.treetable .tt-header div span {
+			width: auto;
+			line-height: 29px;
+			display: inline-block;
+			min-width: 120px;
+			text-align: center;
+		}
+		.treetable .tt-body{
+			border: solid 1px #DDD;
+			padding-top: 1px;
+			background-color:#FFF;
+		}
+		.treetable .tt-header div{
+			border: solid 1px #DDD;
+			border-bottom:none;
+			background-color:#FFF;
+		}
+	</style>
+	<script type="text/javascript">
+    	var obj = JSON.parse('{{res|safe}}');
+		console.log("ATTRIBUTES WE HAVE RECEIVED FROM CSV: ", obj);
+		
+		attributes = obj;
+	</script>
+</head>
+<body>
+	<div class="container" style="margin-top:25px;">
+		<h2>Incremental Mode - v1.1</h2>
+		<div style="padding-bottom: 20px">
+			<div>
+				<p style="font-size:16px;" id="allAttrNames"> </p>
+				<p style="font-size:16px;" id="newTargetDiv"> Name of new target variable: </p>
+				<p style="font-size:16px;" id="targetDiv"> Select target variable first which you want to update! </p>
+			</div>
+		</div>
+		
+		<div id="bs-treeetable" class="treetable">
+			Waiting for target variable ...
+		</div>
+		
+		<div id="form">
+			<input type="text" id="incremental_tree_data" style="display:none" name="incremental_tree_data" />
+			<div id="submitButton" class="treetable" style="margin-top: 50px">
+				<center>
+					<input type="button"  value="download" onclick="displayTreeData()"/>
+				</center>
+			</div>
+		</div>
+		<br>
+	</div>
+
+	<!-- <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script> -->
+	
+	<script type="text/javascript" src="static/jquery.incremental.js"></script>
+	<script type="text/javascript">
+		var selectDiv = document.getElementById("targetDiv");
+		var selectTag = document.createElement("select");
+		var holdingPreviousTarget = {};
+		var allAttr = "";
+		
+		selectTag.setAttribute("id", "targetSelectId");
+		selectTag.setAttribute("onChange","setTargetVariable('')");
+		
+		let option= document.createElement("option");
+		option.setAttribute("value","default");
+		option.innerHTML="Please select from below";
+		selectTag.appendChild(option)
+		for(var key in attributes){
+			allAttr += key + ", ";
+			var optTag = document.createElement("option");
+			var t = document.createTextNode(key);
+			
+			optTag.appendChild(t);
+			optTag.setAttribute("value",key);
+			selectTag.appendChild(optTag);
+		}
+		
+		selectDiv.appendChild(selectTag);
+		
+		var newTargetDiv = document.getElementById("newTargetDiv");
+		var targetInpTag = document.createElement("input");
+		targetInpTag.setAttribute("id", "newVarName");
+		targetInpTag.setAttribute("maxlength", "12");
+		targetInpTag.style.textTransform = "capitalize";
+		newTargetDiv.appendChild(targetInpTag);
+		
+		var attrDiv = document.getElementById("allAttrNames");
+		
+		allAttr = allAttr.slice(0, -2);
+		var hintText = document.createElement("h5");
+		hintText.innerHTML = "List of all columns: <b>" + allAttr + "</b>";
+		attrDiv.appendChild(hintText);
+		
+		function capitalizeEachWord(inp){
+			var temp = inp.split(" ");
+			values = [];
+			for(var i=0; i < temp.length ; i++){
+				var s = temp[i].trim();
+				s = s.charAt(0).toUpperCase() + s.slice(1);
+				values.push(s);
+			}
+			return values.join(" ");
+		}
+		
+		function fetchMaxPID(currData){
+			var res = 0;
+			for(var x in currData){
+				if(currData[x].pid > res){
+					res = currData[x].pid;
+				}
+			}
+			return res;
+		}
+		
+		function setTargetVariable(){
+			if(document.getElementById("newVarName").value.length == 0){
+				alert("Name the new target variable first!");
+				var _keys = Object.keys(holdingPreviousTarget);
+				document.getElementById("targetSelectId").value = "default"
+				if(_keys.length > 0){
+					document.getElementById("targetSelectId").value = "default";
+				}
+				return;
+			}
+			
+			var targetNodes = [];
+			
+			var selectedValue = document.getElementById("targetSelectId").value;	
+			if (selectedValue=="default"){
+				return;
+			}
+			var domainList = attributes[selectedValue]["values"];
+			
+			for(var x = 0; x < domainList.length ; x++){
+				targetNodes.push({id: x+1, name: selectedValue + " = " + domainList[x], pid: 0});
+			}
+			
+			if(Object.keys(holdingPreviousTarget).length > 0){
+				if(fetchMaxPID(data) > 0){	
+					alert("You have started building tree, you cannot now change old target variable.");
+					var _keys = Object.keys(holdingPreviousTarget);
+					
+					if(_keys.length > 0){
+						document.getElementById("targetSelectId").value = _keys[0];
+					}
+					return;
+				}
+				
+				var prevKey = Object.keys(holdingPreviousTarget)[0];
+				var prevValue = holdingPreviousTarget[prevKey];
+				
+				attributes[prevKey] = prevValue;
+				delete holdingPreviousTarget[prevKey];
+			}
+			
+			if(attributes[selectedValue]["type"]=="categorical"){
+				console.log("CATEGORICAL");
+				holdingPreviousTarget[selectedValue] = attributes[selectedValue];
+				delete attributes[selectedValue];
+				
+				document.getElementById("attr_hidden_info").value = JSON.stringify(attributes);
+				document.getElementById("target_hidden_info").value = JSON.stringify(holdingPreviousTarget);
+				
+				$("#attr_hidden_info").trigger('change');
+			}			
+		}
+		
+		var data = [];
+		
+		data = $("#bs-treeetable").bstreetable({
+			data:data,
+			maintitle:"Attribute",
+			availableAttributes: attributes,
+			nodeaddCallback:function(data,callback){
+				//alert(JSON.stringify(data));
+				console.log("HTML: ",data);
+				callback({id:data.id, name:data.name, pid:data.pid});
+				console.log("DONE WITH THE CALLBACK HTML!");
+			},
+			noderemoveCallback:function(data,callback){
+				//alert(JSON.stringify(data));
+				callback();
+			},
+			nodeupdateCallback:function(data,callback){
+				//alert(JSON.stringify(data));
+				callback();
+			},
+			extfield:[
+				{title:"Available Attributes",key:"innercode",type:"select"}
+			]
+		});
+			
+		
+	</script>
+	<script>
+		function download_csv(obj, fname){
+			var data = obj["data"];
+			var csv = '';
+			
+			for(var x = 0; x < obj["cols"].length; x++){
+				csv += obj["cols"][x] + ",";
+			}
+			
+			if(csv.length > 0){
+				csv = csv.slice(0, -1);
+			}
+			
+			csv += "\n";
+			
+			data.forEach(function(row) {
+					csv += row.join(',');
+					csv += "\n";
+			});
+		 
+			var hiddenElement = document.createElement('a');
+			hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+			hiddenElement.target = '_blank';
+			hiddenElement.download = fname + '.csv';
+			hiddenElement.click();
+		}
+		
+		function displayTreeData(){
+			data["new_target_variable"] = {
+				"name" : capitalizeEachWord(document.getElementById("newVarName").value)
+			}
+			
+			for(var x in holdingPreviousTarget){
+				data["new_target_variable"]["type"] = holdingPreviousTarget[x]["type"];
+				data["old_target_variable"] = Object.assign({"name" : x}, holdingPreviousTarget[x]);
+			};
+			
+			data["attr_info"] = attributes;
+			
+			var res = JSON.stringify(data);
+			var hiddenId = document.getElementById("incremental_tree_data");
+			hiddenId.value = res;
+			
+			console.log(data);
+			
+			//var SERVER_URL = "http://localhost:5000/";
+			var SERVER_URL = "";
+			//console.log(SERVER_URL)
+			var REST_API = SERVER_URL + "getIncrementalTreeData";
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("POST", REST_API, true);
+			xhttp.setRequestHeader("Content-Type", "application/json");
+			
+			xhttp.onload = function (e)
+			{
+				if (xhttp.readyState === 4)
+				{
+					if (xhttp.status === 200)
+					{
+						var data = JSON.parse(xhttp.responseText);
+						download_csv(data, "Sample2");
+					}else{
+						alert("Error Occured! Check logs");
+						console.error("Server error: ", xhttp.statusText);
+					}
+				}
+			};
+			xhttp.onerror = function (e)
+			{
+				console.error("Error connecting to: ", SERVER_URL);
+			};
+			xhttp.send(res);
+		}
+	</script>
+</body>
+</html>
