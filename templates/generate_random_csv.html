@@ -89,7 +89,8 @@
                 if(attribute_type=="numerical"){
                     let high=values[1];
                     let low=values[0]
-                    attr_val=getRandomIntInclusive(low,high);
+                    let numtype = currobj.attribute_type
+                    attr_val=getRandomIntInclusive(low,high,numtype);
                 }
                 else{
                     attr_val = values[Math.floor(Math.random()*values.length)];
@@ -118,10 +119,15 @@
     }
 </script>
 <script>
-    function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min); 
+    function getRandomIntInclusive(min, max, numtype) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+    if(numtype == "Integer"){
+        return Math.floor(Math.random() * (max - min + 1) + min); 
+    }
+    else{
+        return (Math.random() * (max - min) + min).toFixed(2);
+    }
 }
 </script>
 

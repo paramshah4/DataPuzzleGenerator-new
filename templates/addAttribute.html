@@ -56,6 +56,7 @@
                     upperLim.disabled = false;
                 }
             }
+
         }
 
         function addAttribute() {
@@ -220,6 +221,27 @@
             var numFormDiv = document.createElement("div");
             numFormDiv.setAttribute("id", "num_form_" + totalAttribute);
 
+            var integer_num = document.createElement("input");
+            integer_num.setAttribute("type", "radio");
+            integer_num.setAttribute("name", "numType" + totalAttribute);
+            integer_num.setAttribute("id", "num_type_" + totalAttribute);
+            integer_num.setAttribute("value", "0");
+            integer_num.setAttribute("checked", true);
+
+            var decimal_num = document.createElement("input");
+            decimal_num.setAttribute("type", "radio");
+            decimal_num.setAttribute("name", "numType" + totalAttribute);
+            decimal_num.setAttribute("id", "dec_type_" + totalAttribute);
+            decimal_num.setAttribute("value", "0");
+            
+            numFormDiv.appendChild(integer_num);
+            numFormDiv.appendChild(document.createTextNode("Integer"));
+
+            numFormDiv.appendChild(decimal_num);
+            numFormDiv.appendChild(document.createTextNode("Decimal"));
+
+            numFormDiv.appendChild(document.createElement("br"));
+
             var lowerLim = document.createElement("input");
             var upperLim = document.createElement("input");
 
@@ -374,7 +396,7 @@
                 // console.log("derived_radio_" + x);
                 if (document.getElementById("derived_radio_" + x) !== null) {
                     var isDerived = document.getElementById("derived_radio_" + x).checked;
-
+                    var numerical_type= ""
                     var isCat = document.getElementById("cat_" + x).checked;
                     var values = [];
                     var type = "";
@@ -382,6 +404,7 @@
                     name = name.charAt(0).toUpperCase() + name.slice(1);
 
                     if (isCat) {
+                        numerical_type = "None"
                         type = "categorical";
                         var temp = document.getElementById("cat_values_" + x).value.split(",");
 
@@ -393,12 +416,20 @@
 
                     } else {
                         type = "numerical";
+                        var numType = document.getElementById("num_type_" + x).checked;
+                        if(numType){
+                            numerical_type = "Integer"
+                        }
+                        else{
+                            numerical_type = "Decimal"
+                        }
                         values = [document.getElementById("new_lower_" + x).value, document.getElementById("new_upper_" + x).value];
                     }
 
                     var curr = {
                         "attributeName": name,
                         "attributeType": type,
+                        "attribute_numtype" : numerical_type,
                         "values": values
                     }
 
@@ -643,6 +674,7 @@
             return false;
         }
         data = prepareData();
+        console.log(data)
         var res = JSON.stringify(data);
         var hiddenId = document.getElementById("entire_data_csv");
         hiddenId.value = res;
