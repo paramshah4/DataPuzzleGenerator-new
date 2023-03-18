@@ -620,23 +620,17 @@
         </div>
         <div style="background-color: lightblue; width: 70%; padding: 10px;">
             <div>
-                <h4>Create Your Own Data Puzzle!!</h4>
+                <h4>Create Your Own Data Puzzle</h4>
                 <form action="newIncremental" method="GET">
                     <input type="Submit" value="Let's Go">
                 </form>
             </div>
-            <div>
-                <h4>Add More Attributes To CSV Files!</h4>
-                <form action="add_attr_to_CSV" method="GET">
-                    <input type="Submit" value="Add">
-                </form>
-            </div>
-
-            <div id="main_header" style="padding-top: 20px;">
-                <h4> Design your schema from scratch or upload the schema that you have!</h4>
-                Upload existing schema file: <input type="file" value="Upload" id="json_file" onchange="render_file()" accept="application/json" />
-            </div>
             <hr>
+            <div id="main_header" style="padding-top: 20px;">
+                <h4> Design your schema from scratch or upload the schema that you have</h4>
+                <!-- Upload existing schema file: <input type="file" value="Upload" id="json_file" onchange="render_file()" accept="application/json" /> -->
+            </div>
+            <!-- <hr> -->
 
 
             <form action="getData" method="POST" onsubmit="return gatherData()">
@@ -655,7 +649,13 @@
                 <input type="text" id="entire_data_csv" style="display:none" name="entire_data_csv">
                 <input type="submit" value="Generate Random CSV" />
             </form>
-
+            <hr>
+            <div>
+                <h4>Add More Attributes To CSV Files</h4>
+                <form action="add_attr_to_CSV" method="GET">
+                    <input type="Submit" value="Add">
+                </form>
+            </div>
 
         </div>
     </center>
